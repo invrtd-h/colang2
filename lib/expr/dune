@@ -1,0 +1,9 @@
+(library
+ (name expr)
+ (modules expr)
+ (libraries mem))
+
+(library
+ (name mem)
+ (modules mem)
+ (libraries batteries))

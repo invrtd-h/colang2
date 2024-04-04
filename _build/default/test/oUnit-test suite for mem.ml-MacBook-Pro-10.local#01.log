@@ -1,0 +1,9 @@
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: Start test test suite for mem.ml:0:test_add.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: Test test suite for mem.ml:0:test_add is successful.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: End test test suite for mem.ml:0:test_add.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: Start test test suite for mem.ml:2:test_unit.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: Test test suite for mem.ml:2:test_unit is successful.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: End test test suite for mem.ml:2:test_unit.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: Start test test suite for mem.ml:4:test_assign_in_function.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: Test test suite for mem.ml:4:test_assign_in_function is successful.
+2024-04-04T13:07:00+00:00 MacBook-Pro-10.local#01 I: End test test suite for mem.ml:4:test_assign_in_function.

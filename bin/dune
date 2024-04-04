@@ -1,0 +1,4 @@
+(executable
+ (public_name colang)
+ (name main)
+ (libraries expr))
