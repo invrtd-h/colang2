@@ -1,8 +1,0 @@
-lib: [
-  "_build/install/default/lib/colang/META"
-  "_build/install/default/lib/colang/dune-package"
-  "_build/install/default/lib/colang/opam"
-]
-bin: [
-  "_build/install/default/bin/colang"
-]
