@@ -6,4 +6,4 @@
 (test
  (name exprT)
  (modules exprT)
- (libraries ounit expr))
+ (libraries ounit expr mem))

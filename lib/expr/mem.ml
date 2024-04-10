@@ -23,6 +23,9 @@ let get : 'a mem -> int -> 'a
 let set : 'a mem -> int -> 'a -> unit
 = fun mem addr value -> Vec.set mem.data addr (Some value)
 
+let length : 'a mem -> int
+= fun mem -> Vec.length mem.data - Heap.size mem.non_alloc_spaces
+
 let push : 'a mem -> 'a -> unit
 = fun mem value -> Vec.add mem.data (Some value)
 
