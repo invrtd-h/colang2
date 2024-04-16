@@ -75,17 +75,25 @@ type l1expr =
 and optype = l1type * l1type * l1type * l1type
 and ast_node = {
   expr : l1expr;
+  info : Lexing.position * Lexing.position;
 }
 
 let fresh_node : l1expr -> ast_node
-= fun expr -> { expr }
+= fun expr -> { expr; info = Lexing.dummy_pos, Lexing.dummy_pos; }
+
+let make : Lexing.position * Lexing.position -> l1expr -> ast_node
+= fun info expr -> { expr; info; }
 
 let unit_e = UnitE
 let int_e n = IntE n
 let bool_e b = BoolE b
+let id_e x = Id x
 
 let let_typed id l1type body next 
 = Let (id, Some l1type, fresh_node body, fresh_node next)
+
+let let_untyped id body next
+= Let (id, None, body, next)
 
 module TEnv = struct 
   type t_env = {

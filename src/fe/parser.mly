@@ -6,20 +6,35 @@ open L1lang
 %token <string> ID
 %token TRUE
 %token FALSE
+
 %token LEQ
 %token TIMES
 %token PLUS
+
 %token LPAREN
 %token RPAREN
-%token LET
+
+%token LET1
+%token JAGIGA
+%token RANUN
+%token IRANUN
+%token SARAMINDE
 %token EQUALS
-%token IN
+%token HETE
+
+%token EUL
+%token REUL
+
 %token IF
 %token THEN
 %token ELSE
+
+%token QUESTION
+%token EXCLAMATION
+
 %token EOF
 
-%nonassoc IN
+%nonassoc HETE
 %nonassoc ELSE
 %left LEQ
 %left PLUS
@@ -29,15 +44,27 @@ open L1lang
 
 %%
 prog:
-  | e = expr; EOF { e }
+  | e = expr EOF { e }
   ;
   
+let_expr:
+  | LET1 JAGIGA x = ID RANUN SARAMINDE body = expr EUL HETE next = expr
+    { let_untyped x body next |> make ($startpos, $endpos) }
+  | LET1 JAGIGA x = ID RANUN SARAMINDE body = expr REUL HETE next = expr
+    { let_untyped x body next |> make ($startpos, $endpos) }
+  | LET1 JAGIGA x = ID IRANUN SARAMINDE body = expr EUL HETE next = expr
+    { let_untyped x body next |> make ($startpos, $endpos) }
+  | LET1 JAGIGA x = ID IRANUN SARAMINDE body = expr REUL HETE next = expr
+    { let_untyped x body next |> make ($startpos, $endpos) }
+  
 expr:
-  | i = INT { IntE i |> fresh_node }
-  | x = ID { Id x |> fresh_node }
-  | TRUE { BoolE true |> fresh_node }
-  | FALSE { BoolE false |> fresh_node }
-  | IF e1 = expr THEN e2 = expr ELSE e3 = expr { IfE (e1, e2, e3) |> fresh_node }
+  | i = INT { int_e i |> make ($startpos, $endpos) }
+  | x = ID { id_e x |> make ($startpos, $endpos) }
+  | TRUE { bool_e true |> make ($startpos, $endpos) }
+  | FALSE { bool_e false |> make ($startpos, $endpos) }
+  | IF QUESTION LPAREN flag = expr RPAREN t = expr ELSE f = expr 
+    { IfE (flag, t, f) |> make ($startpos, $endpos) }
   | LPAREN e = expr RPAREN { e }
+  | e = let_expr { e }
   ;
   
