@@ -2,6 +2,11 @@
  (name expr)
  (modules expr)
  (libraries mem))
+ 
+(library
+ (name l1lang)
+ (modules l1lang)
+ (libraries expr mem))
 
 (library
  (name mem)

@@ -10,7 +10,6 @@ type 'a vec = 'a Vec.t
 type 'a arr = 'a Array.t
 
 type expr = 
-  | UnitE
   | Value of value
   | Id of int
   | Op of expr * expr * expr * op
@@ -40,7 +39,7 @@ let new_env = {
 
 type mem = value Mem.t
 
-let unit_e = UnitE
+let unit_e = Value UnitV
 let value_e value = Value value
 let int_e n = Value (IntV n)
 let id_e id = Id id
@@ -74,10 +73,10 @@ let binop_maker_iii : (int -> int -> int) -> (value -> value -> value -> value)
     end
   end
 
-let add_e l r = Op (l, r, UnitE, binop_maker_iii ( + ))
-let sub_e l r = Op (l, r, UnitE, binop_maker_iii ( - ))
-let mul_e l r = Op (l, r, UnitE, binop_maker_iii ( * ))
-let div_e l r = Op (l, r, UnitE, binop_maker_iii ( / ))
+let add_e l r = Op (l, r, unit_e, binop_maker_iii ( + ))
+let sub_e l r = Op (l, r, unit_e, binop_maker_iii ( - ))
+let mul_e l r = Op (l, r, unit_e, binop_maker_iii ( * ))
+let div_e l r = Op (l, r, unit_e, binop_maker_iii ( / ))
 
 let binop_maker_iib : (int -> int -> bool) -> (value -> value -> value -> value)
 = fun f -> begin
@@ -88,7 +87,7 @@ let binop_maker_iib : (int -> int -> bool) -> (value -> value -> value -> value)
     end
   end
   
-let lt_e l r = Op (l, r, UnitE, binop_maker_iib ( < ))
+let lt_e l r = Op (l, r, unit_e, binop_maker_iib ( < ))
 
 let vec_get vec_v idx_v _ = begin
   let [@warning "-partial-match"] VecV vec = vec_v in
@@ -105,7 +104,6 @@ end
 
 let rec pret : expr -> env -> mem -> value
 = fun expr env mem -> match expr with
-  | UnitE -> UnitV
   | Value v -> v
   | Id id ->
     let addr = env.data |> IntMap.find id in

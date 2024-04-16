@@ -1,0 +1,7 @@
+(library
+ (name fe)
+ (preprocess (pps sedlex.ppx))
+ (libraries sedlex menhirLib l1lang))
+ 
+(menhir
+ (modules parser))

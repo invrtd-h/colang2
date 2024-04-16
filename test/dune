@@ -1,9 +1,14 @@
 (test
- (name memT)
- (modules memT)
- (libraries ounit mem))
-
-(test
  (name exprT)
  (modules exprT)
  (libraries ounit expr mem))
+ 
+ (test
+ (name l1langT)
+ (modules l1langT)
+ (libraries ounit l1lang))
+
+(test
+ (name memT)
+ (modules memT)
+ (libraries ounit mem))

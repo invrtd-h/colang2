@@ -11,7 +11,7 @@ let seqn e1 e2 = let_e 0 e1 e2
 
 let [@warning "-unused-value-declaration"] rec
 join expr_list = match expr_list with
-| [] -> UnitE
+| [] -> unit_e
 | h :: [] -> h
 | h :: t -> seqn h (join t)
 
@@ -40,7 +40,7 @@ let vtos value = match value with
 | VecV _ -> "VecV"
 | TupleV _ -> "TupleV"
 
-let tests = "test suite for mem.ml" >::: [
+let tests = "test suite for expr.ml" >::: [
   "test_add" >:: (fun _ ->
     let e = add_e (int_e 2) (int_e 3) in
     let _ = assert_equal (run e) (IntV 5) in
@@ -51,7 +51,7 @@ let tests = "test suite for mem.ml" >::: [
     let _ = assert_equal (run e) (IntV 2) in
     () 
   );
-  "test_unit" >:: (fun _ -> assert_equal UnitV (run UnitE));
+  "test_unit" >:: (fun _ -> assert_equal UnitV (run unit_e));
   "test_assign_in_function" >:: (fun _ ->
     let e1_frag = let_e 6974 (int_e 1) in
     let e2_frag = let_e 6975 (FunE (Assign (6974, Id 6000), 6000)) in
@@ -85,7 +85,7 @@ let tests = "test suite for mem.ml" >::: [
   "test_if_no_eval" >:: (fun _ ->
     let e = let_join [
       let_e 6974 !*0;
-      let_e 6975 (if_e (lt_e !*1 !*2) UnitE (Assign (6974, !*1)));
+      let_e 6975 (if_e (lt_e !*1 !*2) unit_e (Assign (6974, !*1)));
     ] !$6974 in
     let _ = assert_equal (IntV 0) (run e) ~printer:vtos in
     ()
@@ -106,4 +106,4 @@ let tests = "test suite for mem.ml" >::: [
   )
 ]
 
-let _ = run_test_tt_main tests
+let () = run_test_tt_main tests

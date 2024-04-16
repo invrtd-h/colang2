@@ -1,5 +1,7 @@
 (lang dune 3.14)
 
+(using menhir 3.0)
+
 (name colang)
 
 (generate_opam_files true)
