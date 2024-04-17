@@ -11,6 +11,7 @@ let rec read buf =
   | '(' -> LPAREN
   | ')' -> RPAREN
   | '?' -> QUESTION
+  | '!' -> EXCLAMATION
   | number -> INT (int_of_string (Sedlexing.Utf8.lexeme buf))
   | id_start, Star id_continue -> begin
     match Sedlexing.Utf8.lexeme buf with

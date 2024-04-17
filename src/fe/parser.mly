@@ -47,15 +47,20 @@ prog:
   | e = expr EOF { e }
   ;
   
+iranun:
+  | RANUN { () }
+  | IRANUN { () }
+  ;
+  
+reul:
+  | EUL { () }
+  | REUL EXCLAMATION? { () }
+  ;
+  
 let_expr:
-  | LET1 JAGIGA x = ID RANUN SARAMINDE body = expr EUL HETE next = expr
-    { let_untyped x body next |> make ($startpos, $endpos) }
-  | LET1 JAGIGA x = ID RANUN SARAMINDE body = expr REUL HETE next = expr
-    { let_untyped x body next |> make ($startpos, $endpos) }
-  | LET1 JAGIGA x = ID IRANUN SARAMINDE body = expr EUL HETE next = expr
-    { let_untyped x body next |> make ($startpos, $endpos) }
-  | LET1 JAGIGA x = ID IRANUN SARAMINDE body = expr REUL HETE next = expr
-    { let_untyped x body next |> make ($startpos, $endpos) }
+  | LET1 JAGIGA x = ID iranun SARAMINDE body = expr reul HETE next = expr?
+    { let_untyped x body (Option.value next ~default:(fresh unit_e))
+      |> make ($startpos, $endpos) }
   
 expr:
   | i = INT { int_e i |> make ($startpos, $endpos) }

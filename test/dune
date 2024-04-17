@@ -4,6 +4,11 @@
  (libraries ounit expr mem))
  
  (test
+ (name feT)
+ (modules feT)
+ (libraries ounit fe testSuite))
+ 
+ (test
  (name l1langT)
  (modules l1langT)
  (libraries ounit l1lang))
