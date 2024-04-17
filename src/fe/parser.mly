@@ -7,60 +7,76 @@ open L1lang
 %token TRUE
 %token FALSE
 
-%token LEQ
-%token TIMES
-%token PLUS
-
 %token LPAREN
 %token RPAREN
+%token LBRACE
+%token RBRACE
+
+%token UNDERSCORE
 
 %token LET1
 %token JAGIGA
-%token RANUN
 %token IRANUN
 %token SARAMINDE
-%token EQUALS
 %token HETE
-
-%token EUL
 %token REUL
 
+%token IN
+%token JUNGENEUN
+%token AMURI
+%token IRADO
+%token HAL
+%token SUGA
+%token UPDANDA
+
+%token COLON
+
+%token AH
+%token MEOGEORA
+
 %token IF
-%token THEN
 %token ELSE
 
 %token QUESTION
+%token QUESQUES
 %token EXCLAMATION
+%token EXCLAMEXCLAM
+
+%token INTTYPE
+%token BOOLTYPE
 
 %token EOF
 
-%nonassoc HETE
 %nonassoc ELSE
-%left LEQ
-%left PLUS
-%left TIMES
+%nonassoc AH
 
 %start <L1lang.ast_node> prog
 
 %%
 prog:
-  | e = expr EOF { e }
+  | t = toplevel* EOF { toplevel_join t }
   ;
   
-iranun:
-  | RANUN { () }
-  | IRANUN { () }
+toplevel:
+  | LET1 JAGIGA pat = let_pattern IRANUN SARAMINDE body = expr REUL EXCLAMATION? HETE
+    { fun next ->
+      let_e pat body next |> make ($startpos, $endpos) }
+  | IN fn_name = ID JUNGENEUN EXCLAMEXCLAM AMURI pat = arg_pattern IRADO ret_t = type_expr 
+    LBRACE body = expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM
+    { fun next ->
+      let_rec_e fn_name pat body ret_t next |> make ($startpos, $endpos) }
   ;
   
-reul:
-  | EUL { () }
-  | REUL EXCLAMATION? { () }
+let_pattern:
+  | UNDERSCORE { underscore_lp }
+  | var_id = ID { var_id_lp var_id None }
+  | var_id = ID COLON te = type_expr { var_id_lp var_id (Some te) }
+  | LPAREN l = let_pattern RPAREN { l }
   ;
   
-let_expr:
-  | LET1 JAGIGA x = ID iranun SARAMINDE body = expr reul HETE next = expr?
-    { let_untyped x body (Option.value next ~default:(fresh unit_e))
-      |> make ($startpos, $endpos) }
+arg_pattern:
+  | arg_id = ID COLON te = type_expr { var_id_ap arg_id te }
+  ;
   
 expr:
   | i = INT { int_e i |> make ($startpos, $endpos) }
@@ -68,8 +84,12 @@ expr:
   | TRUE { bool_e true |> make ($startpos, $endpos) }
   | FALSE { bool_e false |> make ($startpos, $endpos) }
   | IF QUESTION LPAREN flag = expr RPAREN t = expr ELSE f = expr 
-    { IfE (flag, t, f) |> make ($startpos, $endpos) }
+    { if_e flag t f |> make ($startpos, $endpos) }
   | LPAREN e = expr RPAREN { e }
-  | e = let_expr { e }
+  | f = expr AH arg = expr MEOGEORA QUESQUES %prec AH
+    { apply_e f arg |> make ($startpos, $endpos)}
   ;
-  
+
+type_expr:
+  | INTTYPE { int_te }
+  | BOOLTYPE { bool_te }

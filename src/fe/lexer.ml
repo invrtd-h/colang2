@@ -6,25 +6,39 @@ open Parser
 let rec read buf =
   match%sedlex buf with
   | white_space -> read buf
-  | "true" -> TRUE
-  | "false" -> FALSE
   | '(' -> LPAREN
   | ')' -> RPAREN
   | '?' -> QUESTION
+  | "??" -> QUESQUES
   | '!' -> EXCLAMATION
+  | "!!" -> EXCLAMEXCLAM
+  | ':' -> COLON
+  | '_' -> UNDERSCORE
   | number -> INT (int_of_string (Sedlexing.Utf8.lexeme buf))
   | id_start, Star id_continue -> begin
     match Sedlexing.Utf8.lexeme buf with
-    | "유링게슝한" -> IF
-    | "안유링게슝" -> ELSE
-    | "아니세상에" -> LET1
-    | "자기가" -> JAGIGA
-    | "라는" -> RANUN
-    | "이라는" -> IRANUN
-    | "사람인데" -> SARAMINDE
-    | "을" -> EUL
-    | "를" -> REUL
-    | "했대" -> HETE
+    | "\u{c720}\u{b9c1}\u{ac8c}\u{c29d}\u{d55c}" -> IF   (* 유링게슝한 *)
+    | "\u{c548}\u{c720}\u{b9c1}\u{ac8c}\u{c29d}" -> ELSE (* 안유링게슝 *)
+    | "\u{c544}\u{b2c8}\u{c138}\u{c0c1}\u{c5d0}" -> LET1 (* 아니세상에 *)
+    | "\u{c790}\u{ae30}\u{ac00}" -> JAGIGA               (* 자기가 *)
+    | "\u{b77c}\u{b294}" -> IRANUN                       (* 라는 *)
+    | "\u{c774}\u{b77c}\u{b294}" -> IRANUN               (* 이라는 *)
+    | "\u{c0ac}\u{b78c}\u{c778}\u{b370}" -> SARAMINDE    (* 사람인데 *)
+    | "\u{c744}" -> REUL                                 (* 을 *)
+    | "\u{b97c}" -> REUL                                 (* 를 *)
+    | "\u{d588}\u{b300}" -> HETE                         (* 했대 *)
+    | "\u{c544}" -> AH                                   (* 아 *)
+    | "\u{c57c}" -> AH                                   (* 야 *)
+    | "\u{ba39}\u{c5b4}\u{b77c}" -> MEOGEORA             (* 먹어라 *)
+    | "\u{c720}\u{b9ac}\u{acc4}\u{c218}" -> INTTYPE      (* 유리계수 *)
+    | "\u{c778}" -> IN                                   (* 인 *)
+    | "\u{c911}\u{c5d0}\u{b294}" -> JUNGENEUN            (* 중에는 *)
+    | "\u{c544}\u{bb34}\u{b9ac}" -> AMURI                (* 아무리 *)
+    | "\u{b77c}\u{b3c4}" -> IRADO                        (* 라도 *)
+    | "\u{c774}\u{b77c}\u{b3c4}" -> IRADO                (* 이라도 *)
+    | "\u{d560}" -> HAL                                  (* 할 *)
+    | "\u{c218}\u{ac00}" -> SUGA                         (* 수가 *)
+    | "\u{c5c6}\u{b2e8}\u{b2e4}" -> UPDANDA              (* 없단다 *)
     | s -> ID s
     end
   | eof -> EOF
