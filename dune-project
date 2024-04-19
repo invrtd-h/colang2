@@ -7,11 +7,11 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github invrtd-h/colang2))
 
-(authors "Author Name")
+(authors "Hyegeun Song")
 
-(maintainers "Maintainer Name")
+(maintainers "")
 
 (license LICENSE)
 

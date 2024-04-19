@@ -20,7 +20,14 @@ type l1type =
   | BottomT
   
 type type_expr =
-  | L1 of l1type
+  | UnitTE
+  | IntTE
+  | BoolTE
+  | FunTE of type_expr * type_expr
+  | VecTE of type_expr
+  | TupleTE of type_expr list
+  | RecordTE of (string * type_expr) list
+  | BottomTE
   | TypeId of string
   
 let rec ( <:: ) : l1type -> l1type -> bool
@@ -61,9 +68,18 @@ let record_t : (string * l1type) list -> l1type
   RecordT l
 let bottom_t = BottomT
 
-let unit_te = L1 unit_t
-let int_te = L1 int_t
-let bool_te = L1 bool_t
+let unit_te = UnitTE
+let int_te = IntTE
+let bool_te = BoolTE
+let fun_te arg ret = FunTE (arg, ret)
+let vec_te d = VecTE d
+let tuple_te arr = TupleTE arr
+let record_te : (string * type_expr) list -> type_expr
+= fun l -> 
+  let l = l |> List.sort (fun (id1, _) (id2, _) -> compare id1 id2) in
+  RecordTE l
+let bottom_te = BottomTE
+let typeid_te x = TypeId x
 
 type l1expr =
   | UnitE
@@ -122,8 +138,8 @@ let unit_ap = UnitAP
 let var_id_ap var_id var_type = VarIdAP (var_id, var_type)
 let tuple_ap list = TupleAP list
   
-let toplevel_join : (ast_node -> ast_node) list -> ast_node
-= fun l -> 
+let toplevel_join : (ast_node -> ast_node) list -> ast_node -> ast_node
+= fun l e -> 
   let l = List.rev l in
   let rec aux : (ast_node -> ast_node) list -> ast_node -> ast_node
   = fun l e ->
@@ -131,7 +147,17 @@ let toplevel_join : (ast_node -> ast_node) list -> ast_node
     | [] -> e
     | h :: t -> aux t (h e)
   in
-  aux l (fresh unit_e)
+  aux l e
+  
+module TupleBuilder = struct
+  let join_rev l r = match l with
+  | TupleTE data -> tuple_te (r :: data)
+  | _ -> TupleTE [r; l]
+  
+  let rev t = match t with
+  | TupleTE data -> TupleTE (data |> List.rev)
+  | _ -> failwith "`TupleBuilder.rev` should get TupleTE type as arg"
+end
 
 module TEnv = struct 
   type t_env = {
@@ -162,9 +188,20 @@ module TEnv = struct
   let find_type : string -> t_env -> l1type
   = fun id env -> StrMap.find id env.aliases
   
-  let pret_type : type_expr -> t_env -> l1type
+  let rec pret_type : type_expr -> t_env -> l1type
   = fun type_expr t_env -> match type_expr with
-    | L1 l1type -> l1type
+    | UnitTE -> unit_t
+    | IntTE -> int_t
+    | BoolTE -> bool_t
+    | FunTE (a, b) -> fun_t (pret_type a t_env) (pret_type b t_env)
+    | TupleTE t -> 
+      let f = fun t -> pret_type t t_env in 
+      TupleT (t |> List.map f |> Array.of_list)
+    | VecTE t -> VecT (pret_type t t_env)
+    | RecordTE data -> 
+      let f = fun (name, t) -> (name, pret_type t t_env) in
+      RecordT (data |> List.map f)
+    | BottomTE -> BottomT
     | TypeId id -> t_env |> find_type id
   
   let add_type : string -> l1type -> t_env -> t_env
