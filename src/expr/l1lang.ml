@@ -4,10 +4,14 @@ exception TypeError of string
 
 module StrSet = Set.Make(String)
 module StrMap = Map.Make(String)
+module StrSMap = Misc.SMap.Make(String)
+module StrTbl = Hashtbl.Make(String)
 
 type str_set = StrSet.t
 type 'a str_map = 'a StrMap.t
+type 'a str_smap = 'a StrSMap.t
 type 'a arr = 'a Array.t
+type 'a str_tbl = 'a StrTbl.t
 
 type l1type =
   | UnitT
@@ -17,6 +21,7 @@ type l1type =
   | VecT of l1type
   | TupleT of l1type arr
   | RecordT of (string * l1type) list
+  | VariantT of string * l1type str_tbl
   | BottomT
   
 type type_expr =
@@ -54,6 +59,11 @@ let rec l1type_to_string : l1type -> string
   | RecordT recs ->
     let recs = recs |> List.map (fun (name, t) -> name ^ ": " ^ l1type_to_string t) in
     "{" ^ (List.fold_left (fun a b -> a ^ ", " ^ b) "" recs) ^ "}"
+  | VariantT (name, variants) -> 
+    variants |> StrTbl.to_seq |> List.of_seq 
+    |> List.sort (fun (l, _) (r, _) -> compare l r) 
+    |> List.map (fun (name, t) -> name ^ ": " ^ l1type_to_string t)
+    |> List.fold_left (fun a b -> a ^ " | " ^ b) (name ^ " -> ")
   | BottomT -> "Bottom"
   
 let unit_t = UnitT
@@ -66,6 +76,7 @@ let record_t : (string * l1type) list -> l1type
 = fun l -> 
   let l = l |> List.sort (fun (id1, _) (id2, _) -> compare id1 id2) in
   RecordT l
+let variant_t name info = VariantT (name, info)
 let bottom_t = BottomT
 
 let unit_te = UnitTE
@@ -86,6 +97,7 @@ type l1expr =
   | IntE of int
   | BoolE of bool
   | Id of string
+  | BinOp of ast_node * ast_node * Expr.binop * binop_tv
   | Op of ast_node * ast_node * ast_node * Expr.op * optype
   | FunE of arg_pattern * type_expr option * ast_node
   | Apply of ast_node * ast_node
@@ -96,6 +108,8 @@ type l1expr =
   | WhileE of ast_node * ast_node
   | VecE of ast_node list
   | TupleE of ast_node arr
+  | VariantDef of string * (string * type_expr) list * ast_node
+and binop_tv = l1type -> l1type -> l1type option
 and optype = l1type * l1type * l1type * l1type
 and ast_node = {
   expr : l1expr;
@@ -122,12 +136,17 @@ let unit_e = UnitE
 let int_e n = IntE n
 let bool_e b = BoolE b
 let id_e x = Id x
+let binop_e l r op verifier = BinOp (l, r, op, verifier)
+let add_e l r = BinOp (l, r, Expr.add_op, fun _ _ -> Some int_t)
+let mult_e l r = BinOp (l, r, Expr.mul_op, fun _ _ -> Some int_t)
 let fun_e pat ret_type body = FunE (pat, ret_type, body)
 let apply_e f arg = Apply (f, arg)
 let let_e pattern body next = Let (pattern, body, next)
 let let_rec_e fn_id arg_pat body ret_type next = 
   LetRec (fn_id, arg_pat, body, ret_type, next)
 let if_e flag t f = IfE (flag, t, f)
+let while_e flag body = WhileE (flag, body)
+let variant_def_e vari_name vari_def next = VariantDef (vari_name, vari_def, next)
   
 let underscore_lp = UnderscoreLP
 let var_id_lp var_id var_type = VarIdLP (var_id, var_type)
@@ -272,6 +291,11 @@ let type_check : ast_node -> string list
     | IntE _ -> IntT
     | BoolE _ -> BoolT
     | Id x -> t_env |> TEnv.find_var x
+    | BinOp (lhs, rhs, _, verifier) ->
+      let tl = pret lhs t_env in
+      let tr = pret rhs t_env in
+      let tret = verifier tl tr in
+      Option.get tret
     | Op (a, b, c, _, op) -> 
       let ta = pret a t_env in
       let tb = pret b t_env in
@@ -353,10 +377,46 @@ let type_check : ast_node -> string list
     | TupleE arr -> 
       let f = fun node -> pret node t_env in
       arr |> Array.map f |> tuple_t
+    | VariantDef (name, variant_info, next) ->
+      let f = fun t -> TEnv.pret_type t t_env in
+      let mapping = StrTbl.create (List.length variant_info) in
+      let () = variant_info 
+      |> List.iter (fun (name, t) -> StrTbl.add mapping name (f t)) in
+      let new_type = variant_t name mapping in
+      let new_t_env = t_env |> TEnv.add_type name new_type in
+      pret next new_t_env
   in
   let _ = pret node TEnv.empty in
   !report  
-    
-        
-        
-        
+
+
+let compile : ast_node -> Expr.expr
+= fun node ->
+  let _idalloc : string -> int str_smap -> int str_smap * int
+  = fun name env ->
+    if env |> StrSMap.contains name then
+      env, env |> StrSMap.find name
+    else
+      let new_id = env |> StrSMap.size in
+      let new_env = env |> StrSMap.add name new_id in
+      new_env, new_id
+  in
+  let rec aux : ast_node -> int str_smap -> Expr.expr
+  = fun node env -> 
+    match node.expr with
+    | UnitE -> Expr.unit_e
+    | IntE n -> Expr.int_e n
+    | BoolE b -> Expr.bool_e b
+    | Id id -> 
+      let id = env |> StrSMap.find id in
+      Expr.id_e id
+    | BinOp (lhs, rhs, op, _) ->
+      Expr.binop_e (aux lhs env) (aux rhs env) op
+    | Op (a, b, c, op, _) -> 
+      Expr.op_e (aux a env) (aux b env) (aux c env) op
+    | _ -> failwith "not implemented"
+  in
+  let _ = type_check node in
+  aux node StrSMap.empty
+
+let compile_and_run node = node |> compile |> Expr.run

@@ -46,6 +46,10 @@ let rec read buf =
     | "\u{c720}\u{b9ac}\u{acc4}\u{c218}" -> INTTYPE      (* 유리계수 *)
     | "\u{c870}\u{c774}\u{ace0}" -> JOYGO                (* 조이고 *)
     | "\u{bb49}\u{d0f1}\u{c774}" -> MTE                  (* 뭉탱이 *)
+    | "\u{c5ec}\u{b7ec}\u{bd84}" -> YEOREOBUN            (* 여러분 *)
+    | "\u{c740}" -> NEUN                                 (* 은 *)
+    | "\u{b294}" -> NEUN                                 (* 는 *)
+    | "\u{c77c}\u{ae4c}\u{c694}" -> ILKAYO               (* 일까요 *)
     
     | "\u{c778}" -> IN                                   (* 인 *)
     | "\u{c911}\u{c5d0}\u{b294}" -> JUNGENEUN            (* 중에는 *)

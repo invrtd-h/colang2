@@ -12,6 +12,7 @@ type 'a arr = 'a Array.t
 type expr = 
   | Value of value
   | Id of int
+  | BinOp of expr * expr * binop
   | Op of expr * expr * expr * op
   | FunE of expr * int
   | Apply of expr * expr
@@ -31,7 +32,9 @@ and value =
   | TupleV of value arr
 and env = {
   data : int int_map
-} and op = value -> value -> value -> value
+}
+and binop = value -> value -> value
+and op = value -> value -> value -> value
 
 let new_env = {
   data = IntMap.empty
@@ -42,7 +45,10 @@ type mem = value Mem.t
 let unit_e = Value UnitV
 let value_e value = Value value
 let int_e n = Value (IntV n)
+let bool_e b = Value (BoolV b)
 let id_e id = Id id
+let binop_e lhs rhs op = BinOp (lhs, rhs, op)
+let op_e a b c op = Op (a, b, c, op)
 let fun_e body id = FunE (body, id)
 let apply fn arg = Apply (fn, arg)
 let assign_e id e = Assign (id, e)
@@ -64,19 +70,24 @@ module Misc = struct
     let [@warning "-partial-match"] BoolV b = v in b
 end
 
-let binop_maker_iii : (int -> int -> int) -> (value -> value -> value -> value)
+let binop_maker_iii : (int -> int -> int) -> (value -> value -> value)
 = fun f -> begin
-    fun vl vr _ -> begin
+    fun vl vr -> begin
       let [@warning "-partial-match"] IntV l = vl in
       let [@warning "-partial-match"] IntV r = vr in
       IntV (f l r)
     end
   end
+  
+let add_op = binop_maker_iii ( + )
+let sub_op = binop_maker_iii ( - )
+let mul_op = binop_maker_iii ( * )
+let div_op = binop_maker_iii ( / )
 
-let add_e l r = Op (l, r, unit_e, binop_maker_iii ( + ))
-let sub_e l r = Op (l, r, unit_e, binop_maker_iii ( - ))
-let mul_e l r = Op (l, r, unit_e, binop_maker_iii ( * ))
-let div_e l r = Op (l, r, unit_e, binop_maker_iii ( / ))
+let add_e l r = BinOp (l, r, add_op)
+let sub_e l r = BinOp (l, r, sub_op)
+let mul_e l r = BinOp (l, r, mul_op)
+let div_e l r = BinOp (l, r, div_op)
 
 let binop_maker_iib : (int -> int -> bool) -> (value -> value -> value -> value)
 = fun f -> begin
@@ -108,6 +119,10 @@ let rec pret : expr -> env -> mem -> value
   | Id id ->
     let addr = env.data |> IntMap.find id in
     Mem.get mem addr
+  | BinOp (lhs, rhs, op) ->
+    let lhs = pret lhs env mem in
+    let rhs = pret rhs env mem in
+    op lhs rhs
   | Op (a, b, c, op) ->
     let a = pret a env mem in
     let b = pret b env mem in

@@ -55,6 +55,9 @@ open L1lang
 %token VECTOR
 %token JOYGO
 %token MTE
+%token YEOREOBUN
+%token NEUN
+%token ILKAYO
 
 %token EOF
 
@@ -78,7 +81,14 @@ toplevel:
     LBRACE body = expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM
     { fun next ->
       let_rec_e fn_name pat body ret_t next |> make ($startpos, $endpos) }
+  | YEOREOBUN name = ID NEUN defs = variant_def* QUESQUES
+    { fun next ->
+      variant_def_e name defs next |> make ($startpos, $endpos) }
   ;
+  
+variant_def:
+  | cons_name = ID ILKAYO { cons_name, unit_te }
+  | cons_name = ID COLON tinfo = type_expr ILKAYO { cons_name, tinfo }
   
 let_pattern:
   | UNDERSCORE { underscore_lp }
@@ -106,6 +116,7 @@ expr:
   | LPAREN e = expr RPAREN { e }
   | f = expr AH arg = expr MEOGEORA QUESQUES
     { apply_e f arg |> make ($startpos, $endpos)}
+  | lhs = expr JOYGO rhs = expr { mult_e lhs rhs |> make ($startpos, $endpos) }
   ;
 
 type_expr:
