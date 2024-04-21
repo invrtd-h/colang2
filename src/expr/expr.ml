@@ -12,6 +12,7 @@ type 'a arr = 'a Array.t
 type expr = 
   | Value of value
   | Id of int
+  | UnaryOp of expr * unary_op
   | BinOp of expr * expr * binop
   | Op of expr * expr * expr * op
   | FunE of expr * int
@@ -33,6 +34,7 @@ and value =
 and env = {
   data : int int_map
 }
+and unary_op = value -> value
 and binop = value -> value -> value
 and op = value -> value -> value -> value
 
@@ -41,23 +43,6 @@ let new_env = {
 }
 
 type mem = value Mem.t
-
-let unit_e = Value UnitV
-let value_e value = Value value
-let int_e n = Value (IntV n)
-let bool_e b = Value (BoolV b)
-let id_e id = Id id
-let binop_e lhs rhs op = BinOp (lhs, rhs, op)
-let op_e a b c op = Op (a, b, c, op)
-let fun_e body id = FunE (body, id)
-let apply fn arg = Apply (fn, arg)
-let assign_e id e = Assign (id, e)
-let let_e id expr next = Let (id, expr, next)
-let let_rec f_id body arg_id next = LetRec (f_id, body, arg_id, next)
-let if_e flag t f = IfE (flag, t, f)
-let while_e flag body = WhileE (flag, body)
-let vec_e l = VecE l
-let tuple_e a = TupleE a
 
 module Misc = struct
   let extract_fun : value -> expr * env * int
@@ -70,47 +55,88 @@ module Misc = struct
     let [@warning "-partial-match"] BoolV b = v in b
 end
 
-let binop_maker_iii : (int -> int -> int) -> (value -> value -> value)
-= fun f -> begin
-    fun vl vr -> begin
-      let [@warning "-partial-match"] IntV l = vl in
-      let [@warning "-partial-match"] IntV r = vr in
-      IntV (f l r)
+module Op = struct
+  let binop_maker_iii : (int -> int -> int) -> (value -> value -> value)
+  = fun f -> begin
+      fun vl vr -> begin
+        let [@warning "-partial-match"] IntV l = vl in
+        let [@warning "-partial-match"] IntV r = vr in
+        IntV (f l r)
+      end
     end
+  
+  let add = binop_maker_iii ( + )
+  let sub = binop_maker_iii ( - )
+  let mul = binop_maker_iii ( * )
+  let div = binop_maker_iii ( / )
+  
+  let binop_maker_iib : (int -> int -> bool) -> (value -> value -> value)
+  = fun f -> begin
+      fun vl vr -> begin
+        let [@warning "-partial-match"] IntV l = vl in
+        let [@warning "-partial-match"] IntV r = vr in
+        BoolV (f l r)
+      end
+    end
+  
+  let lt = binop_maker_iib ( < )
+  
+  let tup_get idx tup_v = begin
+    let [@warning "-partial-match"] TupleV tup = tup_v in
+    Array.get tup idx
   end
   
-let add_op = binop_maker_iii ( + )
-let sub_op = binop_maker_iii ( - )
-let mul_op = binop_maker_iii ( * )
-let div_op = binop_maker_iii ( / )
-
-let add_e l r = BinOp (l, r, add_op)
-let sub_e l r = BinOp (l, r, sub_op)
-let mul_e l r = BinOp (l, r, mul_op)
-let div_e l r = BinOp (l, r, div_op)
-
-let binop_maker_iib : (int -> int -> bool) -> (value -> value -> value -> value)
-= fun f -> begin
-    fun vl vr _ -> begin
-      let [@warning "-partial-match"] IntV l = vl in
-      let [@warning "-partial-match"] IntV r = vr in
-      BoolV (f l r)
-    end
+  let vec_get vec_v idx_v = begin
+    let [@warning "-partial-match"] VecV vec = vec_v in
+    let [@warning "-partial-match"] IntV idx = idx_v in
+    Vec.get vec idx
   end
   
-let lt_e l r = Op (l, r, unit_e, binop_maker_iib ( < ))
-
-let vec_get vec_v idx_v _ = begin
-  let [@warning "-partial-match"] VecV vec = vec_v in
-  let [@warning "-partial-match"] IntV idx = idx_v in
-  Vec.get vec idx
+  let vec_set vec_v idx_v value = begin
+    let [@warning "-partial-match"] VecV vec = vec_v in
+    let [@warning "-partial-match"] IntV idx = idx_v in
+    let _ = Vec.set vec idx value in
+    UnitV
+  end
 end
 
-let vec_set vec_v idx_v value = begin
-  let [@warning "-partial-match"] VecV vec = vec_v in
-  let [@warning "-partial-match"] IntV idx = idx_v in
-  let _ = Vec.set vec idx value in
-  UnitV
+module Help = struct
+  let unit = Value UnitV
+  let value value = Value value
+  let int n = Value (IntV n)
+  let bool b = Value (BoolV b)
+  let id id = Id id
+  let binop lhs rhs op = BinOp (lhs, rhs, op)
+  let op a b c o = Op (a, b, c, o)
+  let fun' body id = FunE (body, id)
+  let apply fn arg = Apply (fn, arg)
+  let assign id e = Assign (id, e)
+  let let' id expr next = Let (id, expr, next)
+  let let_rec f_id body arg_id next = LetRec (f_id, body, arg_id, next)
+  let if' flag t f = IfE (flag, t, f)
+  let while' flag body = WhileE (flag, body)
+  let vec l = VecE l
+  let tuple a = TupleE a
+  
+  let add l r = BinOp (l, r, Op.add)
+  let sub l r = BinOp (l, r, Op.sub)
+  let mul l r = BinOp (l, r, Op.mul)
+  let div l r = BinOp (l, r, Op.div)
+  
+  let lt l r = BinOp (l, r, Op.lt)
+  
+  let tup_get n tup = UnaryOp (tup, Op.tup_get n)
+  
+  let let_join : (expr -> expr) list -> expr -> expr
+  = fun l e -> 
+    let l = List.rev l in
+    let rec aux : (expr -> expr) list -> expr -> expr
+    = fun l e ->
+      match l with
+      | [] -> e
+      | h :: t -> aux t (h e)
+    in
+    aux l e
 end
 
 let rec pret : expr -> env -> mem -> value
@@ -119,6 +145,9 @@ let rec pret : expr -> env -> mem -> value
   | Id id ->
     let addr = env.data |> IntMap.find id in
     Mem.get mem addr
+  | UnaryOp (e, op) ->
+    let v = pret e env mem in
+    op v
   | BinOp (lhs, rhs, op) ->
     let lhs = pret lhs env mem in
     let rhs = pret rhs env mem in

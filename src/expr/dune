@@ -6,7 +6,7 @@
 (library
  (name l1lang)
  (modules l1lang)
- (libraries expr mem misc))
+ (libraries expr mem colib))
 
 (library
  (name mem)

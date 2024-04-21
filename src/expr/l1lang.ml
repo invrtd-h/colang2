@@ -4,7 +4,7 @@ exception TypeError of string
 
 module StrSet = Set.Make(String)
 module StrMap = Map.Make(String)
-module StrSMap = Misc.SMap.Make(String)
+module StrSMap = Colib.SMap.Make(String)
 module StrTbl = Hashtbl.Make(String)
 
 type str_set = StrSet.t
@@ -97,6 +97,7 @@ type l1expr =
   | IntE of int
   | BoolE of bool
   | Id of string
+  | UnaryOp of ast_node * Expr.unary_op * unop_tv
   | BinOp of ast_node * ast_node * Expr.binop * binop_tv
   | Op of ast_node * ast_node * ast_node * Expr.op * optype
   | FunE of arg_pattern * type_expr option * ast_node
@@ -109,12 +110,14 @@ type l1expr =
   | VecE of ast_node list
   | TupleE of ast_node arr
   | VariantDef of string * (string * type_expr) list * ast_node
+  [@@deriving show]
+and unop_tv = l1type -> l1type option
 and binop_tv = l1type -> l1type -> l1type option
 and optype = l1type * l1type * l1type * l1type
 and ast_node = {
   expr : l1expr;
   info : (Lexing.position * Lexing.position) option;
-}
+} [@@deriving show]
 and let_pattern = 
   | UnderscoreLP
   | VarIdLP of string * type_expr option
@@ -136,9 +139,8 @@ let unit_e = UnitE
 let int_e n = IntE n
 let bool_e b = BoolE b
 let id_e x = Id x
+let unary_op_e e op verifier = UnaryOp (e, op, verifier)
 let binop_e l r op verifier = BinOp (l, r, op, verifier)
-let add_e l r = BinOp (l, r, Expr.add_op, fun _ _ -> Some int_t)
-let mult_e l r = BinOp (l, r, Expr.mul_op, fun _ _ -> Some int_t)
 let fun_e pat ret_type body = FunE (pat, ret_type, body)
 let apply_e f arg = Apply (f, arg)
 let let_e pattern body next = Let (pattern, body, next)
@@ -156,6 +158,16 @@ let tuple_lp list = TupleLP list
 let unit_ap = UnitAP
 let var_id_ap var_id var_type = VarIdAP (var_id, var_type)
 let tuple_ap list = TupleAP list
+
+module Op = struct
+  let add l r = BinOp (l, r, Expr.Op.add, fun _ _ -> Some int_t)
+  let mul l r = BinOp (l, r, Expr.Op.mul, fun _ _ -> Some int_t)
+  
+  let tup_get idx e = UnaryOp (e, Expr.Op.tup_get idx, fun t -> match t with
+    | TupleT t -> Array.get t idx |> Option.some
+    | _ -> None  
+  )
+end
   
 let toplevel_join : (ast_node -> ast_node) list -> ast_node -> ast_node
 = fun l e -> 
@@ -252,7 +264,27 @@ let rec assign_let_pat : let_pattern -> l1type -> t_env -> (string * l1type) lis
     | _ -> failwith "The Assigned Type is Not a Tuple"
   end
   | ConstrLP (_constructor_name, _pat) ->
-    failwith "unimplemented"
+    failwith "unimplemented : assign_let_pat"
+end
+
+let compile_let_pat : let_pattern -> l1expr -> (string * l1expr) list
+= fun pat defining_expr -> begin
+  let rec aux : let_pattern -> string -> l1expr -> (string * l1expr) list
+  = fun pat top_name defining_expr -> match pat with
+    | UnderscoreLP -> []
+    | VarIdLP (var_id, _) -> [(var_id, defining_expr)]
+    | AliasNameLP (pat, alias_name) ->
+      let l = aux pat top_name (id_e alias_name) in
+      (alias_name, defining_expr) :: l
+    | TupleLP data ->
+      (* {let (l1, l2) = z} -> let l0 = z; let l1 = z.0; let l2 = z.1 *)
+      let tuple_name = Colib.IdGiver.gen () in
+      let f = fun idx pat -> aux pat tuple_name (Op.tup_get idx (fresh (id_e tuple_name))) in
+      let _data = List.mapi f data in
+      failwith "unimplemented : tuple_lp compile_let_pat"
+    | _ -> failwith "unimplemented : compile_let_pat"
+  in
+  aux pat (Colib.IdGiver.gen ()) defining_expr
 end
 
 let rec extract_arg_pat_type : arg_pattern -> t_env -> (string * l1type) list
@@ -291,6 +323,10 @@ let type_check : ast_node -> string list
     | IntE _ -> IntT
     | BoolE _ -> BoolT
     | Id x -> t_env |> TEnv.find_var x
+    | UnaryOp (e, _, verifier) ->
+      let t = pret e t_env in
+      let tret = verifier t in
+      Option.get tret
     | BinOp (lhs, rhs, _, verifier) ->
       let tl = pret lhs t_env in
       let tr = pret rhs t_env in
@@ -392,7 +428,7 @@ let type_check : ast_node -> string list
 
 let compile : ast_node -> Expr.expr
 = fun node ->
-  let _idalloc : string -> int str_smap -> int str_smap * int
+  let idalloc : string -> int str_smap -> int str_smap * int
   = fun name env ->
     if env |> StrSMap.contains name then
       env, env |> StrSMap.find name
@@ -401,22 +437,39 @@ let compile : ast_node -> Expr.expr
       let new_env = env |> StrSMap.add name new_id in
       new_env, new_id
   in
-  let rec aux : ast_node -> int str_smap -> Expr.expr
-  = fun node env -> 
-    match node.expr with
-    | UnitE -> Expr.unit_e
-    | IntE n -> Expr.int_e n
-    | BoolE b -> Expr.bool_e b
+  let rec aux : l1expr -> int str_smap -> Expr.expr
+  = fun expr env -> 
+    match expr with
+    | UnitE -> Expr.Help.unit
+    | IntE n -> Expr.Help.int n
+    | BoolE b -> Expr.Help.bool b
     | Id id -> 
       let id = env |> StrSMap.find id in
-      Expr.id_e id
+      Expr.Help.id id
     | BinOp (lhs, rhs, op, _) ->
-      Expr.binop_e (aux lhs env) (aux rhs env) op
+      Expr.Help.binop (aux lhs.expr env) (aux rhs.expr env) op
     | Op (a, b, c, op, _) -> 
-      Expr.op_e (aux a env) (aux b env) (aux c env) op
+      Expr.Help.op (aux a.expr env) (aux b.expr env) (aux c.expr env) op
+    | Let (pat, body, next) ->
+      let env = ref env in
+      let l : (Expr.expr -> Expr.expr) list ref = ref [] in
+      
+      let f : (string * l1expr) -> unit
+      = fun (str_id, expr) -> begin
+        let new_env, id = !env |> idalloc str_id in
+        let () = env := new_env in
+        let expr : Expr.expr = aux expr !env in
+        l := Expr.Help.let' id expr :: !l
+      end in
+      
+      let l' = compile_let_pat pat body.expr in
+      (* example: l = ["x", (2, 3); "y", "x".0; "z", "x".1]*)
+      let () = List.iter f l' in
+      let () = l := List.rev !l in
+      Expr.Help.let_join !l (aux next.expr !env)
     | _ -> failwith "not implemented"
   in
   let _ = type_check node in
-  aux node StrSMap.empty
+  aux node.expr StrSMap.empty
 
 let compile_and_run node = node |> compile |> Expr.run

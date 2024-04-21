@@ -40,6 +40,8 @@ open L1lang
 %token AH
 %token MEOGEORA
 
+%token MUKM
+
 %token IF
 %token ELSE
 
@@ -116,7 +118,7 @@ expr:
   | LPAREN e = expr RPAREN { e }
   | f = expr AH arg = expr MEOGEORA QUESQUES
     { apply_e f arg |> make ($startpos, $endpos)}
-  | lhs = expr JOYGO rhs = expr { mult_e lhs rhs |> make ($startpos, $endpos) }
+  | lhs = expr JOYGO rhs = expr { Op.mul lhs rhs |> make ($startpos, $endpos) }
   ;
 
 type_expr:

@@ -1,6 +1,8 @@
 let digit = [%sedlex.regexp? '0'..'9']
 let number = [%sedlex.regexp? Plus digit]
 
+exception LexError of Lexing.position * string
+
 open Parser
 
 let rec read buf =
@@ -18,6 +20,7 @@ let rec read buf =
   | "!!" -> EXCLAMEXCLAM
   | ':' -> COLON
   | ';' -> SEMICOLON
+  | ',' -> COMMA
   | '_' -> UNDERSCORE
   | "->" -> ARROW
   | number -> INT (int_of_string (Sedlexing.Utf8.lexeme buf))
@@ -64,3 +67,6 @@ let rec read buf =
     end
   | eof -> EOF
   | _ -> failwith "Unexpected Character"
+  
+let lexer buf =
+  Sedlexing.with_tokenizer read buf

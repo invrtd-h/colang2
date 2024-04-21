@@ -1,8 +1,13 @@
 (library
  (name fe)
- (preprocess (pps sedlex.ppx))
- (libraries sedlex menhirLib l1lang))
+ (preprocess (pps sedlex.ppx ppx_deriving.std))
+ (libraries sedlex menhirLib ppxlib ppx_deriving l1lang))
  
 (menhir
- (flags --dump)
+ (flags --dump --table)
  (modules parser))
+ 
+(rule
+ (targets parser_messages.ml)
+ (deps parser.messages parser.mly)
+ (action (with-stdout-to %{targets} (run menhir --compile-errors %{deps}))))
