@@ -97,27 +97,23 @@ type l1expr =
   | IntE of int
   | BoolE of bool
   | Id of string
-  | UnaryOp of ast_node * Expr.unary_op * unop_tv
-  | BinOp of ast_node * ast_node * Expr.binop * binop_tv
-  | Op of ast_node * ast_node * ast_node * Expr.op * optype
-  | FunE of arg_pattern * type_expr option * ast_node
-  | Apply of ast_node * ast_node
-  | Assign of string * ast_node
-  | Let of let_pattern * ast_node * ast_node
-  | LetRec of string * arg_pattern * ast_node * type_expr * ast_node
-  | IfE of ast_node * ast_node * ast_node
-  | WhileE of ast_node * ast_node
-  | VecE of ast_node list
-  | TupleE of ast_node arr
-  | VariantDef of string * (string * type_expr) list * ast_node
+  | UnaryOp of l1expr * Expr.unary_op * unop_tv
+  | BinOp of l1expr * l1expr * Expr.binop * binop_tv
+  | Op of l1expr * l1expr * l1expr * Expr.op * optype
+  | FunE of arg_pattern * type_expr option * l1expr
+  | Apply of l1expr * l1expr
+  | Assign of string * l1expr
+  | Let of let_pattern * l1expr * l1expr
+  | LetRec of string * arg_pattern * l1expr * type_expr * l1expr
+  | IfE of l1expr * l1expr * l1expr
+  | WhileE of l1expr * l1expr
+  | VecE of l1expr list
+  | TupleE of l1expr arr
+  | VariantDef of string * (string * type_expr) list * l1expr
   [@@deriving show]
 and unop_tv = l1type -> l1type option
 and binop_tv = l1type -> l1type -> l1type option
 and optype = l1type * l1type * l1type * l1type
-and ast_node = {
-  expr : l1expr;
-  info : (Lexing.position * Lexing.position) option;
-} [@@deriving show]
 and let_pattern = 
   | UnderscoreLP
   | VarIdLP of string * type_expr option
@@ -128,12 +124,6 @@ and arg_pattern =
   | UnitAP
   | VarIdAP of string * type_expr
   | TupleAP of arg_pattern list
-
-let fresh : l1expr -> ast_node
-= fun expr -> { expr; info = None; }
-
-let make : Lexing.position * Lexing.position -> l1expr -> ast_node
-= fun info expr -> { expr; info = Some info; }
 
 let unit_e = UnitE
 let int_e n = IntE n
@@ -169,10 +159,10 @@ module Op = struct
   )
 end
   
-let toplevel_join : (ast_node -> ast_node) list -> ast_node -> ast_node
+let toplevel_join : (l1expr -> l1expr) list -> l1expr -> l1expr
 = fun l e -> 
   let l = List.rev l in
-  let rec aux : (ast_node -> ast_node) list -> ast_node -> ast_node
+  let rec aux : (l1expr -> l1expr) list -> l1expr -> l1expr
   = fun l e ->
     match l with
     | [] -> e
@@ -279,7 +269,7 @@ let compile_let_pat : let_pattern -> l1expr -> (string * l1expr) list
     | TupleLP data ->
       (* {let (l1, l2) = z} -> let l0 = z; let l1 = z.0; let l2 = z.1 *)
       let tuple_name = Colib.IdGiver.gen () in
-      let f = fun idx pat -> aux pat tuple_name (Op.tup_get idx (fresh (id_e tuple_name))) in
+      let f = fun idx pat -> aux pat tuple_name (Op.tup_get idx (id_e tuple_name)) in
       let _data = List.mapi f data in
       failwith "unimplemented : tuple_lp compile_let_pat"
     | _ -> failwith "unimplemented : compile_let_pat"
@@ -304,12 +294,11 @@ let rec pret_arg_pat_type : arg_pattern -> t_env -> l1type
     data |> List.map (fun pat -> pret_arg_pat_type pat t_env) 
     |> Array.of_list |> tuple_t
 
-let type_check : ast_node -> string list
-= fun node ->
+let type_check : l1expr -> string list
+= fun expr ->
   let report : string list ref = ref [] in
-  let rec pret : ast_node -> t_env -> l1type
-  = fun node t_env ->
-    let { expr; _ } = node in
+  let rec pret : l1expr -> t_env -> l1type
+  = fun expr t_env ->
     let ( <:! ) l r
     = if l <:: r then 
         () 
@@ -422,12 +411,12 @@ let type_check : ast_node -> string list
       let new_t_env = t_env |> TEnv.add_type name new_type in
       pret next new_t_env
   in
-  let _ = pret node TEnv.empty in
+  let _ = pret expr TEnv.empty in
   !report  
 
 
-let compile : ast_node -> Expr.expr
-= fun node ->
+let compile : l1expr -> Expr.expr
+= fun expr ->
   let idalloc : string -> int str_smap -> int str_smap * int
   = fun name env ->
     if env |> StrSMap.contains name then
@@ -447,9 +436,9 @@ let compile : ast_node -> Expr.expr
       let id = env |> StrSMap.find id in
       Expr.Help.id id
     | BinOp (lhs, rhs, op, _) ->
-      Expr.Help.binop (aux lhs.expr env) (aux rhs.expr env) op
+      Expr.Help.binop (aux lhs env) (aux rhs env) op
     | Op (a, b, c, op, _) -> 
-      Expr.Help.op (aux a.expr env) (aux b.expr env) (aux c.expr env) op
+      Expr.Help.op (aux a env) (aux b env) (aux c env) op
     | Let (pat, body, next) ->
       let env = ref env in
       let l : (Expr.expr -> Expr.expr) list ref = ref [] in
@@ -462,14 +451,14 @@ let compile : ast_node -> Expr.expr
         l := Expr.Help.let' id expr :: !l
       end in
       
-      let l' = compile_let_pat pat body.expr in
+      let l' = compile_let_pat pat body in
       (* example: l = ["x", (2, 3); "y", "x".0; "z", "x".1]*)
       let () = List.iter f l' in
       let () = l := List.rev !l in
-      Expr.Help.let_join !l (aux next.expr !env)
+      Expr.Help.let_join !l (aux next !env)
     | _ -> failwith "not implemented"
   in
-  let _ = type_check node in
-  aux node.expr StrSMap.empty
+  let _ = type_check expr in
+  aux expr StrSMap.empty
 
 let compile_and_run node = node |> compile |> Expr.run

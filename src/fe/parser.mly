@@ -68,7 +68,7 @@ open L1lang
 %left ARROW
 %left JOYGO
 
-%start <L1lang.ast_node> prog
+%start <L1lang.l1expr> prog
 
 %%
 prog:
@@ -78,14 +78,14 @@ prog:
 toplevel:
   | LET1 JAGIGA pat = let_pattern IRANUN SARAMINDE body = expr REUL EXCLAMATION? HETE
     { fun next ->
-      let_e pat body next |> make ($startpos, $endpos) }
+      let_e pat body next }
   | IN fn_name = ID JUNGENEUN EXCLAMEXCLAM AMURI pat = arg_pattern IRADO ret_t = type_expr 
     LBRACE body = expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM
     { fun next ->
-      let_rec_e fn_name pat body ret_t next |> make ($startpos, $endpos) }
+      let_rec_e fn_name pat body ret_t next }
   | YEOREOBUN name = ID NEUN defs = variant_def* QUESQUES
     { fun next ->
-      variant_def_e name defs next |> make ($startpos, $endpos) }
+      variant_def_e name defs next }
   ;
   
 variant_def:
@@ -108,17 +108,17 @@ arg_pattern:
   ;
   
 expr:
-  | i = INT { int_e i |> make ($startpos, $endpos) }
-  | x = var_id { id_e x |> make ($startpos, $endpos) }
-  | SKIVIA { unit_e |> make ($startpos, $endpos) }
-  | TRUE { bool_e true |> make ($startpos, $endpos) }
-  | FALSE { bool_e false |> make ($startpos, $endpos) }
+  | i = INT { int_e i }
+  | x = var_id { id_e x }
+  | SKIVIA { unit_e }
+  | TRUE { bool_e true }
+  | FALSE { bool_e false }
   | IF QUESTION LPAREN flag = expr RPAREN t = expr ELSE f = expr 
-    { if_e flag t f |> make ($startpos, $endpos) }
+    { if_e flag t f }
   | LPAREN e = expr RPAREN { e }
   | f = expr AH arg = expr MEOGEORA QUESQUES
-    { apply_e f arg |> make ($startpos, $endpos)}
-  | lhs = expr JOYGO rhs = expr { Op.mul lhs rhs |> make ($startpos, $endpos) }
+    { apply_e f arg }
+  | lhs = expr JOYGO rhs = expr { Op.mul lhs rhs }
   ;
 
 type_expr:

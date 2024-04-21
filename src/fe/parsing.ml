@@ -24,7 +24,7 @@ let handle_syntax_error lexbuf env =
   Format.fprintf Format.err_formatter "%s %a\n%!" message pp_pos
     (fst @@ Sedlexing.lexing_positions lexbuf)
 
-let rec loop next_token lexbuf (checkpoint : L1lang.ast_node I.checkpoint) =
+let rec loop next_token lexbuf (checkpoint : L1lang.l1expr I.checkpoint) =
   match checkpoint with
   | I.InputNeeded _env ->
     let token = next_token () in
