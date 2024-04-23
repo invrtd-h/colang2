@@ -1,7 +1,7 @@
 (library
  (name expr)
  (modules expr)
- (libraries mem))
+ (libraries mem colib))
  
 (library
  (name l1lang)

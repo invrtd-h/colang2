@@ -9,6 +9,8 @@ module Vec = BatDynArray
 type 'a vec = 'a Vec.t
 type 'a arr = 'a Array.t
 
+module Myprint = Colib.Myprint
+
 type expr = 
   | Value of value
   | Id of int
@@ -106,6 +108,7 @@ module Help = struct
   let int n = Value (IntV n)
   let bool b = Value (BoolV b)
   let id id = Id id
+  let unary_op e op = UnaryOp (e, op)
   let binop lhs rhs op = BinOp (lhs, rhs, op)
   let op a b c o = Op (a, b, c, o)
   let fun' body id = FunE (body, id)
@@ -137,6 +140,49 @@ module Help = struct
       | h :: t -> aux t (h e)
     in
     aux l e
+    
+  let rec expr_to_string expr = match expr with
+  | Value v -> value_to_string v
+  | Id id -> Format.sprintf "$%d" id
+  | UnaryOp (e, _) -> 
+    Format.sprintf "UnaryOp(%s)" @@ expr_to_string e
+  | BinOp (l, r, _) -> 
+    Format.sprintf "BinOp(%s, %s)" (expr_to_string l) (expr_to_string r)
+  | Op (a, b, c, _) ->
+    Format.sprintf "Op(%s, %s, %s)"
+    (expr_to_string a)
+    (expr_to_string b)
+    (expr_to_string c)
+  | FunE (body, arg) ->
+    Format.sprintf "fun $%d -> { %s }" arg (expr_to_string body)
+  | Apply (f, arg) ->
+    Format.sprintf "Apply (f=%s, arg=%s)" 
+    (expr_to_string f) (expr_to_string arg) 
+  | Assign (id, e) ->
+    Format.sprintf "$%d := %s" id (expr_to_string e)
+  | Let (id, e, next) ->
+    Format.sprintf "Let $%d = %s in %s" id (expr_to_string e) (expr_to_string next)
+  | LetRec (body_id, body, arg_id, next) ->
+    Format.sprintf "Let Rec $%d = fun $%d -> { %s } in %s"
+    body_id arg_id (expr_to_string body) (expr_to_string next)
+  | IfE (flag, t, f) ->
+    Format.sprintf "If %s Then %s Else %s"
+    (expr_to_string flag) (expr_to_string t) (expr_to_string f)
+  | WhileE (flag, body) -> 
+    Format.sprintf "While %s { %s }" 
+    (expr_to_string flag) (expr_to_string body)
+  | VecE data -> 
+    data |> Myprint.list_to_string expr_to_string
+  | TupleE arr -> arr |> Myprint.arr_to_string expr_to_string
+  and value_to_string value = match value with
+  | UnitV -> "unit"
+  | IntV n -> string_of_int n
+  | BoolV b -> string_of_bool b
+  | FunV _ -> "<fun>"
+  | VecV data -> 
+    data |> BatDynArray.to_list 
+    |> Myprint.list_to_string value_to_string
+  | TupleV arr -> arr |> Myprint.arr_to_string value_to_string
 end
 
 let rec pret : expr -> env -> mem -> value

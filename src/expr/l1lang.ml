@@ -71,7 +71,7 @@ let int_t = IntT
 let bool_t = BoolT
 let fun_t arg ret = FunT (arg, ret)
 let vec_t d = VecT d
-let tuple_t arr = TupleT arr
+let tuple_t l = TupleT l
 let record_t : (string * l1type) list -> l1type
 = fun l -> 
   let l = l |> List.sort (fun (id1, _) (id2, _) -> compare id1 id2) in
@@ -108,7 +108,7 @@ type l1expr =
   | IfE of l1expr * l1expr * l1expr
   | WhileE of l1expr * l1expr
   | VecE of l1expr list
-  | TupleE of l1expr arr
+  | TupleE of l1expr list
   | VariantDef of string * (string * type_expr) list * l1expr
   [@@deriving show]
 and unop_tv = l1type -> l1type option
@@ -140,10 +140,14 @@ let if_e flag t f = IfE (flag, t, f)
 let while_e flag body = WhileE (flag, body)
 let variant_def_e vari_name vari_def next = VariantDef (vari_name, vari_def, next)
   
-let underscore_lp = UnderscoreLP
-let var_id_lp var_id var_type = VarIdLP (var_id, var_type)
-let alias_name_lp pattern alias = AliasNameLP (pattern, alias)
-let tuple_lp list = TupleLP list
+module Lp = struct
+  let underscore = UnderscoreLP
+  let var_id id var_type = VarIdLP (id, var_type)
+  let alias_name pattern alias = AliasNameLP (pattern, alias)
+  let tuple list = TupleLP list
+end
+
+
 
 let unit_ap = UnitAP
 let var_id_ap var_id var_type = VarIdAP (var_id, var_type)
@@ -270,8 +274,8 @@ let compile_let_pat : let_pattern -> l1expr -> (string * l1expr) list
       (* {let (l1, l2) = z} -> let l0 = z; let l1 = z.0; let l2 = z.1 *)
       let tuple_name = Colib.IdGiver.gen () in
       let f = fun idx pat -> aux pat tuple_name (Op.tup_get idx (id_e tuple_name)) in
-      let _data = List.mapi f data in
-      failwith "unimplemented : tuple_lp compile_let_pat"
+      let data = List.mapi f data in
+      (tuple_name, defining_expr) :: List.flatten data
     | _ -> failwith "unimplemented : compile_let_pat"
   in
   aux pat (Colib.IdGiver.gen ()) defining_expr
@@ -294,9 +298,8 @@ let rec pret_arg_pat_type : arg_pattern -> t_env -> l1type
     data |> List.map (fun pat -> pret_arg_pat_type pat t_env) 
     |> Array.of_list |> tuple_t
 
-let type_check : l1expr -> string list
+let type_check : l1expr -> unit
 = fun expr ->
-  let report : string list ref = ref [] in
   let rec pret : l1expr -> t_env -> l1type
   = fun expr t_env ->
     let ( <:! ) l r
@@ -305,7 +308,7 @@ let type_check : l1expr -> string list
       else  
         let report_elt = Printf.sprintf "%s is not the subtype of %s"
           (l1type_to_string l) (l1type_to_string r) in
-        report := report_elt :: !report
+        failwith report_elt
       in
     match expr with
     | UnitE -> UnitT
@@ -355,8 +358,7 @@ let type_check : l1expr -> string list
           let report_elt = 
             Printf.sprintf "%s is not the function type, which is not applicable"
             (l1type_to_string fn_type) in
-          let () = report := report_elt :: !report in
-          bottom_t
+          failwith report_elt
       end
     | Assign (var_name, value_new) -> 
       let value_type = pret value_new t_env in
@@ -385,7 +387,7 @@ let type_check : l1expr -> string list
           let report_elt = 
             Printf.sprintf "true-type %s is not equal to false-type %s"
             (l1type_to_string t_type) (l1type_to_string f_type) in
-          report := report_elt :: !report
+          failwith report_elt
         in
         t_type
       else
@@ -401,7 +403,7 @@ let type_check : l1expr -> string list
       raise NotImplemented
     | TupleE arr -> 
       let f = fun node -> pret node t_env in
-      arr |> Array.map f |> tuple_t
+      arr |> List.map f |> Array.of_list |> tuple_t
     | VariantDef (name, variant_info, next) ->
       let f = fun t -> TEnv.pret_type t t_env in
       let mapping = StrTbl.create (List.length variant_info) in
@@ -412,7 +414,7 @@ let type_check : l1expr -> string list
       pret next new_t_env
   in
   let _ = pret expr TEnv.empty in
-  !report  
+  ()
 
 
 let compile : l1expr -> Expr.expr
@@ -435,6 +437,8 @@ let compile : l1expr -> Expr.expr
     | Id id -> 
       let id = env |> StrSMap.find id in
       Expr.Help.id id
+    | UnaryOp (e, op, _) ->
+      Expr.Help.unary_op (aux e env) op
     | BinOp (lhs, rhs, op, _) ->
       Expr.Help.binop (aux lhs env) (aux rhs env) op
     | Op (a, b, c, op, _) -> 
@@ -452,13 +456,18 @@ let compile : l1expr -> Expr.expr
       end in
       
       let l' = compile_let_pat pat body in
-      (* example: l = ["x", (2, 3); "y", "x".0; "z", "x".1]*)
+      (* example: l = ["x", (2, 3); "y", "x".0; "z", "x".1] *)
       let () = List.iter f l' in
       let () = l := List.rev !l in
       Expr.Help.let_join !l (aux next !env)
-    | _ -> failwith "not implemented"
+    | TupleE l -> 
+      l |> List.map (fun elem -> aux elem env) 
+      |> Array.of_list
+      |> Expr.Help.tuple
+    | _ -> failwith "unimplemented : compile"
   in
   let _ = type_check expr in
   aux expr StrSMap.empty
 
 let compile_and_run node = node |> compile |> Expr.run
+

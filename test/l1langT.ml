@@ -8,8 +8,7 @@ let tests = "test suite for expr.ml" >::: [
   "test_add" >:: (
     fun _ -> 
       let e = let_single_typed_e "x" bool_te (int_e 3) unit_e in
-      let report = e |> type_check in
-      let () = print_endline (List.hd report) in
+      let () = type_check e in
       ()
   )
 ]

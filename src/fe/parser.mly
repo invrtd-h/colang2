@@ -63,10 +63,12 @@ open L1lang
 
 %token EOF
 
+%left COMMA
 %nonassoc ELSE
 %nonassoc AH
 %left ARROW
 %left JOYGO
+
 
 %start <L1lang.l1expr> prog
 
@@ -93,10 +95,11 @@ variant_def:
   | cons_name = ID COLON tinfo = type_expr ILKAYO { cons_name, tinfo }
   
 let_pattern:
-  | UNDERSCORE { underscore_lp }
-  | id = var_id { var_id_lp id None }
-  | id = var_id COLON te = type_expr { var_id_lp id (Some te) }
-  | LPAREN l = let_pattern RPAREN { l }
+  | UNDERSCORE { Lp.underscore }
+  | id = var_id { Lp.var_id id None }
+  | id = var_id COLON te = type_expr { Lp.var_id id (Some te) }
+  | LPAREN l = separated_nonempty_list(COMMA, let_pattern) RPAREN
+    { Lp.tuple l }
   ;
   
 var_id:
@@ -116,9 +119,11 @@ expr:
   | IF QUESTION LPAREN flag = expr RPAREN t = expr ELSE f = expr 
     { if_e flag t f }
   | LPAREN e = expr RPAREN { e }
-  | f = expr AH arg = expr MEOGEORA QUESQUES
+  | f = expr AH arg = expr MEOGEORA QUESQUES (* apply *)
     { apply_e f arg }
-  | lhs = expr JOYGO rhs = expr { Op.mul lhs rhs }
+  | lhs = expr JOYGO rhs = expr { Op.mul lhs rhs } (* mult *)
+  | MUKM EXCLAMEXCLAM LPAREN l = separated_nonempty_list(COMMA, expr) RPAREN (* tuple *)
+    { TupleE l }
   ;
 
 type_expr:

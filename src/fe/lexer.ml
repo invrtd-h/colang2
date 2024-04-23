@@ -63,6 +63,8 @@ let rec read buf =
     | "\u{c218}\u{ac00}" -> SUGA                         (* 수가 *)
     | "\u{c5c6}\u{b2e8}\u{b2e4}" -> UPDANDA              (* 없단다 *)
     
+    | "\u{bb36}\u{c74c}" -> MUKM                         (* 묶음 *)
+    
     | s -> ID s
     end
   | eof -> EOF
