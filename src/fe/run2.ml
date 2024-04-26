@@ -1,3 +1,5 @@
+open Lang
+
 module I = Parser.MenhirInterpreter
 module S = MenhirLib.General
 

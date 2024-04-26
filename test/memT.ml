@@ -1,4 +1,5 @@
 open OUnit2
+open Lang
 
 let tests = "test suite for mem.ml" >::: [
   "test1" >:: (fun _ -> 

@@ -1,96 +1,13 @@
+open L1type
+
 exception NotImplemented
 
 exception TypeError of string
 
-module StrSet = Set.Make(String)
-module StrMap = Map.Make(String)
 module StrSMap = Colib.SMap.Make(String)
-module StrTbl = Hashtbl.Make(String)
 
-type str_set = StrSet.t
-type 'a str_map = 'a StrMap.t
 type 'a str_smap = 'a StrSMap.t
 type 'a arr = 'a Array.t
-type 'a str_tbl = 'a StrTbl.t
-
-type l1type =
-  | UnitT
-  | IntT
-  | BoolT
-  | FunT of l1type * l1type
-  | VecT of l1type
-  | TupleT of l1type arr
-  | RecordT of (string * l1type) list
-  | VariantT of string * l1type str_tbl
-  | BottomT
-  
-type type_expr =
-  | UnitTE
-  | IntTE
-  | BoolTE
-  | FunTE of type_expr * type_expr
-  | VecTE of type_expr
-  | TupleTE of type_expr list
-  | RecordTE of (string * type_expr) list
-  | BottomTE
-  | TypeId of string
-  
-let rec ( <:: ) : l1type -> l1type -> bool
-= fun l r -> match l, r with
-  | BottomT, _ | UnitT, UnitT | IntT, IntT | BoolT, BoolT -> true
-  | FunT (la, lr), FunT (ra, rr) -> (la <:: ra) && (rr <:: lr)
-  | VecT vl, VecT vr -> vl <:: vr
-  | TupleT la, TupleT ra -> 
-    if Array.length la = Array.length ra then
-      Array.for_all2 ( <:: ) la ra
-    else false
-  | _, _ -> false
-
-let rec l1type_to_string : l1type -> string
-= function
-  | UnitT -> "Unit"
-  | IntT -> "Int"
-  | BoolT -> "Bool"
-  | FunT (arg, ret) -> l1type_to_string arg ^ " -> " ^ l1type_to_string ret
-  | VecT v -> "Vec[" ^ l1type_to_string v ^ "]"
-  | TupleT arr -> 
-    let arr = arr |> Array.map l1type_to_string in
-    "(" ^ (Array.fold_left (fun a b -> a ^ ", " ^ b) "" arr) ^ ")"
-  | RecordT recs ->
-    let recs = recs |> List.map (fun (name, t) -> name ^ ": " ^ l1type_to_string t) in
-    "{" ^ (List.fold_left (fun a b -> a ^ ", " ^ b) "" recs) ^ "}"
-  | VariantT (name, variants) -> 
-    variants |> StrTbl.to_seq |> List.of_seq 
-    |> List.sort (fun (l, _) (r, _) -> compare l r) 
-    |> List.map (fun (name, t) -> name ^ ": " ^ l1type_to_string t)
-    |> List.fold_left (fun a b -> a ^ " | " ^ b) (name ^ " -> ")
-  | BottomT -> "Bottom"
-  
-let unit_t = UnitT
-let int_t = IntT
-let bool_t = BoolT
-let fun_t arg ret = FunT (arg, ret)
-let vec_t d = VecT d
-let tuple_t l = TupleT l
-let record_t : (string * l1type) list -> l1type
-= fun l -> 
-  let l = l |> List.sort (fun (id1, _) (id2, _) -> compare id1 id2) in
-  RecordT l
-let variant_t name info = VariantT (name, info)
-let bottom_t = BottomT
-
-let unit_te = UnitTE
-let int_te = IntTE
-let bool_te = BoolTE
-let fun_te arg ret = FunTE (arg, ret)
-let vec_te d = VecTE d
-let tuple_te arr = TupleTE arr
-let record_te : (string * type_expr) list -> type_expr
-= fun l -> 
-  let l = l |> List.sort (fun (id1, _) (id2, _) -> compare id1 id2) in
-  RecordTE l
-let bottom_te = BottomTE
-let typeid_te x = TypeId x
 
 type l1expr =
   | UnitE
@@ -125,20 +42,24 @@ and arg_pattern =
   | VarIdAP of string * type_expr
   | TupleAP of arg_pattern list
 
-let unit_e = UnitE
-let int_e n = IntE n
-let bool_e b = BoolE b
-let id_e x = Id x
-let unary_op_e e op verifier = UnaryOp (e, op, verifier)
-let binop_e l r op verifier = BinOp (l, r, op, verifier)
-let fun_e pat ret_type body = FunE (pat, ret_type, body)
-let apply_e f arg = Apply (f, arg)
-let let_e pattern body next = Let (pattern, body, next)
-let let_rec_e fn_id arg_pat body ret_type next = 
-  LetRec (fn_id, arg_pat, body, ret_type, next)
-let if_e flag t f = IfE (flag, t, f)
-let while_e flag body = WhileE (flag, body)
-let variant_def_e vari_name vari_def next = VariantDef (vari_name, vari_def, next)
+module E = struct 
+  let unit = UnitE
+  let int n = IntE n
+  let bool b = BoolE b
+  let id x = Id x
+  let unary_op e op verifier = UnaryOp (e, op, verifier)
+  let binop l r op verifier = BinOp (l, r, op, verifier)
+  let fn pat ret_type body = FunE (pat, ret_type, body)
+  let apply f arg = Apply (f, arg)
+  let let' pattern body next = Let (pattern, body, next)
+  let let_rec fn_id arg_pat body ret_type next = 
+    LetRec (fn_id, arg_pat, body, ret_type, next)
+  let if' flag t f = IfE (flag, t, f)
+  let vec l = VecE l
+  let tuple l = TupleE l
+  let while' flag body = WhileE (flag, body)
+  let variant_def vari_name vari_def next = VariantDef (vari_name, vari_def, next)
+end
   
 module Lp = struct
   let underscore = UnderscoreLP
@@ -147,15 +68,15 @@ module Lp = struct
   let tuple list = TupleLP list
 end
 
-
-
-let unit_ap = UnitAP
-let var_id_ap var_id var_type = VarIdAP (var_id, var_type)
-let tuple_ap list = TupleAP list
+module Ap = struct
+  let unit = UnitAP
+  let var_id var_id var_type = VarIdAP (var_id, var_type)
+  let tuple list = TupleAP list
+end
 
 module Op = struct
-  let add l r = BinOp (l, r, Expr.Op.add, fun _ _ -> Some int_t)
-  let mul l r = BinOp (l, r, Expr.Op.mul, fun _ _ -> Some int_t)
+  let add l r = BinOp (l, r, Expr.Op.add, fun _ _ -> Some T.int)
+  let mul l r = BinOp (l, r, Expr.Op.mul, fun _ _ -> Some T.int)
   
   let tup_get idx e = UnaryOp (e, Expr.Op.tup_get idx, fun t -> match t with
     | TupleT t -> Array.get t idx |> Option.some
@@ -176,64 +97,13 @@ let toplevel_join : (l1expr -> l1expr) list -> l1expr -> l1expr
   
 module TupleBuilder = struct
   let join_rev l r = match l with
-  | TupleTE data -> tuple_te (r :: data)
-  | _ -> TupleTE [r; l]
+  | TupleTE data -> TE.tuple (r :: data)
+  | _ -> TE.tuple [r; l]
   
   let rev t = match t with
   | TupleTE data -> TupleTE (data |> List.rev)
   | _ -> failwith "`TupleBuilder.rev` should get TupleTE type as arg"
 end
-
-module TEnv = struct 
-  type t_env = {
-    vars : l1type str_map;
-    aliases : l1type str_map;
-    type_binds : str_set;
-  } 
-  
-  let empty = {
-    vars = StrMap.empty;
-    aliases = StrMap.empty;
-    type_binds = StrSet.empty;
-  }
-  
-  let find_var : string -> t_env -> l1type
-  = fun id env -> StrMap.find id env.vars
-  
-  let add_var : string -> l1type -> t_env -> t_env
-  = fun id l1type env -> { env with vars = StrMap.add id l1type env.vars }
-  
-  let rec add_var_list : (string * l1type) list -> t_env -> t_env
-  = fun list env -> match list with
-  | [] -> env
-  | (id, l1type) :: t -> 
-    let new_env = add_var id l1type env in
-    add_var_list t new_env
-  
-  let find_type : string -> t_env -> l1type
-  = fun id env -> StrMap.find id env.aliases
-  
-  let rec pret_type : type_expr -> t_env -> l1type
-  = fun type_expr t_env -> match type_expr with
-    | UnitTE -> unit_t
-    | IntTE -> int_t
-    | BoolTE -> bool_t
-    | FunTE (a, b) -> fun_t (pret_type a t_env) (pret_type b t_env)
-    | TupleTE t -> 
-      let f = fun t -> pret_type t t_env in 
-      TupleT (t |> List.map f |> Array.of_list)
-    | VecTE t -> VecT (pret_type t t_env)
-    | RecordTE data -> 
-      let f = fun (name, t) -> (name, pret_type t t_env) in
-      RecordT (data |> List.map f)
-    | BottomTE -> BottomT
-    | TypeId id -> t_env |> find_type id
-  
-  let add_type : string -> l1type -> t_env -> t_env
-  = fun id l1type env -> { env with aliases = StrMap.add id l1type env.aliases }
-end
-
-type t_env = TEnv.t_env
 
 let rec assign_let_pat : let_pattern -> l1type -> t_env -> (string * l1type) list
 = fun pat type_to_assign t_env -> begin
@@ -268,12 +138,12 @@ let compile_let_pat : let_pattern -> l1expr -> (string * l1expr) list
     | UnderscoreLP -> []
     | VarIdLP (var_id, _) -> [(var_id, defining_expr)]
     | AliasNameLP (pat, alias_name) ->
-      let l = aux pat top_name (id_e alias_name) in
+      let l = aux pat top_name (E.id alias_name) in
       (alias_name, defining_expr) :: l
     | TupleLP data ->
       (* {let (l1, l2) = z} -> let l0 = z; let l1 = z.0; let l2 = z.1 *)
       let tuple_name = Colib.IdGiver.gen () in
-      let f = fun idx pat -> aux pat tuple_name (Op.tup_get idx (id_e tuple_name)) in
+      let f = fun idx pat -> aux pat tuple_name (Op.tup_get idx (E.id tuple_name)) in
       let data = List.mapi f data in
       (tuple_name, defining_expr) :: List.flatten data
     | _ -> failwith "unimplemented : compile_let_pat"
@@ -292,11 +162,11 @@ let rec extract_arg_pat_type : arg_pattern -> t_env -> (string * l1type) list
 
 let rec pret_arg_pat_type : arg_pattern -> t_env -> l1type
 = fun pat t_env -> match pat with
-  | UnitAP -> unit_t
+  | UnitAP -> T.unit
   | VarIdAP (_, t) -> TEnv.pret_type t t_env
   | TupleAP data -> 
     data |> List.map (fun pat -> pret_arg_pat_type pat t_env) 
-    |> Array.of_list |> tuple_t
+    |> Array.of_list |> T.tuple
 
 let type_check : l1expr -> unit
 = fun expr ->
@@ -311,9 +181,9 @@ let type_check : l1expr -> unit
         failwith report_elt
       in
     match expr with
-    | UnitE -> UnitT
-    | IntE _ -> IntT
-    | BoolE _ -> BoolT
+    | UnitE -> T.unit
+    | IntE _ -> T.int
+    | BoolE _ -> T.bool
     | Id x -> t_env |> TEnv.find_var x
     | UnaryOp (e, _, verifier) ->
       let t = pret e t_env in
@@ -343,8 +213,8 @@ let type_check : l1expr -> unit
         | Some ret_expect ->
           let ret_expect = TEnv.pret_type ret_expect t_env in
           let () = body_type <:! ret_expect in
-          fun_t arg_type ret_expect
-        | None -> fun_t arg_type body_type
+          T.fn arg_type ret_expect
+        | None -> T.fn arg_type body_type
       end
     | Apply (fn, arg) -> 
       let fn_type = pret fn t_env in
@@ -363,7 +233,7 @@ let type_check : l1expr -> unit
     | Assign (var_name, value_new) -> 
       let value_type = pret value_new t_env in
       let () = value_type <:! TEnv.find_var var_name t_env in
-      unit_t
+      T.unit
     | Let (pat, var_def, next) -> 
       let var_type = pret var_def t_env in
       let pat_info = assign_let_pat pat var_type t_env in
@@ -374,13 +244,13 @@ let type_check : l1expr -> unit
       let arg_type = pret_arg_pat_type pat t_env in
       let ret_type = TEnv.pret_type ret_type t_env in
       let new_t_env = t_env |> TEnv.add_var_list pat_info in
-      let new_t_env = new_t_env |> TEnv.add_var fn_name (fun_t arg_type ret_type) in
+      let new_t_env = new_t_env |> TEnv.add_var fn_name (T.fn arg_type ret_type) in
       let body_type = pret body new_t_env in
       let () = body_type <:! ret_type in
       pret next new_t_env
     | IfE (flag, t, f) -> 
       let flag_type = pret flag t_env in
-      if flag_type <:: bool_t then
+      if flag_type <:: T.bool then
         let t_type = pret t t_env in
         let f_type = pret f t_env in
         let () = if t_type != f_type then
@@ -391,25 +261,25 @@ let type_check : l1expr -> unit
         in
         t_type
       else
-        let () = flag_type <:! bool_t in
-        bottom_t
+        let () = flag_type <:! T.bool in
+        T.bottom
     | WhileE (flag, _) -> 
       let flag_type = pret flag t_env in
-      let () = flag_type <:! bool_t in
-      unit_t
+      let () = flag_type <:! T.bool in
+      T.unit
     | VecE l -> 
       let f = fun node -> pret node t_env in
       let _l = l |> List.map f in
       raise NotImplemented
     | TupleE arr -> 
       let f = fun node -> pret node t_env in
-      arr |> List.map f |> Array.of_list |> tuple_t
+      arr |> List.map f |> Array.of_list |> T.tuple
     | VariantDef (name, variant_info, next) ->
       let f = fun t -> TEnv.pret_type t t_env in
       let mapping = StrTbl.create (List.length variant_info) in
       let () = variant_info 
       |> List.iter (fun (name, t) -> StrTbl.add mapping name (f t)) in
-      let new_type = variant_t name mapping in
+      let new_type = T.variant name mapping in
       let new_t_env = t_env |> TEnv.add_type name new_type in
       pret next new_t_env
   in

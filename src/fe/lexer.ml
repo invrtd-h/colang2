@@ -36,7 +36,7 @@ let rec read buf =
     | "\u{b77c}\u{b294}" -> IRANUN                       (* 라는 *)
     | "\u{c774}\u{b77c}\u{b294}" -> IRANUN               (* 이라는 *)
     | "\u{c0ac}\u{b78c}\u{c778}\u{b370}" -> SARAMINDE    (* 사람인데 *)
-    | "\u{c744}" -> REUL                                 (* 을 *)
+    | "\u{c744}" -> EUL                                  (* 을 *)
     | "\u{b97c}" -> REUL                                 (* 를 *)
     | "\u{d588}\u{b300}" -> HETE                         (* 했대 *)
     

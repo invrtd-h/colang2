@@ -1,5 +1,5 @@
 open OUnit2
-open Expr
+open Lang.Expr
 
 let [@warning "-unused-value-declaration"] true_e 
 = Value (BoolV true)
@@ -87,10 +87,10 @@ let tests = "test suite for expr.ml" >::: [
       Help.let' 6977 (!$6976 ++ !$6976);
     ] (Id 6977) in
     let env = new_env in
-    let mem = Mem.create () in
+    let mem = Lang.Mem.create () in
     let _ = assert_equal (IntV 8) (pret e env mem) ~printer:vtos in
-    let _ = assert_equal 0 (Mem.length mem) in
-    let _ = assert_equal 4 (Mem.Vec.length mem.data) in
+    let _ = assert_equal 0 (Lang.Mem.length mem) in
+    let _ = assert_equal 4 (Lang.Mem.Vec.length mem.data) in
     ()
   )
 ]

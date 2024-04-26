@@ -1,7 +1,7 @@
 exception ParserError of string
 exception LexerError of string
 
-val parse : string -> L1lang.l1expr
+val parse : string -> Lang.L1lang.l1expr
 val typecheck : string -> unit
-val compile : string -> Expr.expr
-val run : string -> Expr.value
+val compile : string -> Lang.Expr.expr
+val run : string -> Lang.Expr.value

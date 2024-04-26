@@ -1,7 +1,7 @@
 (library
  (name fe)
  (preprocess (pps sedlex.ppx ppx_deriving.std))
- (libraries sedlex menhirLib ppxlib ppx_deriving l1lang))
+ (libraries sedlex menhirLib ppxlib ppx_deriving lang))
  
 (menhir
  (flags --dump --table)
