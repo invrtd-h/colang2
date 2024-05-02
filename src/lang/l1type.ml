@@ -2,7 +2,6 @@ module StrSet = Set.Make(String)
 module StrMap = Map.Make(String)
 module StrTbl = Hashtbl.Make(String)
 
-type str_set = StrSet.t
 type 'a str_map = 'a StrMap.t
 type 'a str_tbl = 'a StrTbl.t
 type 'a arr = 'a Array.t
@@ -73,6 +72,14 @@ module T = struct
     RecordT l
   let variant name info = VariantT (name, info)
   let bottom = BottomT
+  
+  let as_tuple t = match t with
+  | TupleT a -> Ok a
+  | _ -> Error ()
+  
+  let as_fun t = match t with
+  | FunT (a, r) -> Ok (a, r)
+  | _ -> Error ()
 end
 
 module TE = struct
@@ -88,13 +95,17 @@ module TE = struct
     RecordTE l
   let bottom = BottomTE
   let typeid x = TypeId x
+  
+  let as_tuple te = match te with
+  | TupleTE l -> Ok l
+  | _ -> Error ()
 end
 
 module TEnv = struct 
   type t_env = {
     vars : l1type str_map;
     aliases : l1type str_map;
-    type_binds : str_set;
+    type_binds : StrSet.t;
   } 
   
   let empty = {

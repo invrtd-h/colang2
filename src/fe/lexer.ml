@@ -23,6 +23,7 @@ let rec read buf =
   | ',' -> COMMA
   | '_' -> UNDERSCORE
   | "->" -> ARROW
+  | '~' -> TILDE
   | number -> INT (int_of_string (Sedlexing.Utf8.lexeme buf))
   | id_start, Star id_continue -> begin
     match Sedlexing.Utf8.lexeme buf with
@@ -44,9 +45,13 @@ let rec read buf =
     | "\u{c57c}" -> AH                                   (* 야 *)
     | "\u{ba39}\u{c5b4}\u{b77c}" -> MEOGEORA             (* 먹어라 *)
     
+    | "\u{c790}" -> JA                                   (* 자 *)
+    
     | "\u{c2a4}\u{d0b5}\u{c774}\u{c57c}" -> SKIVIA       (* 스킵이야 *)
     | "\u{c2a4}\u{d0a4}\u{be44}\u{c57c}" -> SKIVIA       (* 스키비야 *)
     | "\u{c720}\u{b9ac}\u{acc4}\u{c218}" -> INTTYPE      (* 유리계수 *)
+    | "\u{c77c}\u{ae4c}" -> ILKA                         (* 일까 *)
+    | "\u{c544}\u{b2d0}\u{ae4c}" -> ANILKA               (* 아닐까 *)
     | "\u{c870}\u{c774}\u{ace0}" -> JOYGO                (* 조이고 *)
     | "\u{bb49}\u{d0f1}\u{c774}" -> MTE                  (* 뭉탱이 *)
     | "\u{c5ec}\u{b7ec}\u{bd84}" -> YEOREOBUN            (* 여러분 *)

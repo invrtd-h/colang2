@@ -22,6 +22,7 @@ type expr =
   | Assign of int * expr
   | Let of int * expr * expr
   | LetRec of int * expr * int * expr
+  | Seqn of expr * expr
   | IfE of expr * expr * expr
   | WhileE of expr * expr
   | VecE of expr list
@@ -116,6 +117,7 @@ module Help = struct
   let assign id e = Assign (id, e)
   let let' id expr next = Let (id, expr, next)
   let let_rec f_id body arg_id next = LetRec (f_id, body, arg_id, next)
+  let seqn l r = Seqn (l, r)
   let if' flag t f = IfE (flag, t, f)
   let while' flag body = WhileE (flag, body)
   let vec l = VecE l
@@ -165,6 +167,8 @@ module Help = struct
   | LetRec (body_id, body, arg_id, next) ->
     Format.sprintf "Let Rec $%d = fun $%d -> { %s } in %s"
     body_id arg_id (expr_to_string body) (expr_to_string next)
+  | Seqn (l, r) -> 
+    (expr_to_string l) ^ "; " ^ (expr_to_string r)
   | IfE (flag, t, f) ->
     Format.sprintf "If %s Then %s Else %s"
     (expr_to_string flag) (expr_to_string t) (expr_to_string f)
@@ -232,6 +236,9 @@ let rec pret : expr -> env -> mem -> value
     and new_env : env = { data = env.data |> IntMap.add fun_id fun_addr } in
     let _ = Mem.set mem fun_addr funV in
     pret next_expr new_env mem
+  | Seqn (l, r) -> 
+    let _ = pret l env mem in
+    pret r env mem
   | IfE (flag, t, f) ->
     let flag = pret flag env mem |> Misc.extract_bool in
     if flag then

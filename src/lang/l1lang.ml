@@ -4,6 +4,7 @@ exception NotImplemented
 
 exception TypeError of string
 
+module StrTbl = Hashtbl.Make(String)
 module StrSMap = Colib.SMap.Make(String)
 
 type 'a str_smap = 'a StrSMap.t
@@ -22,6 +23,7 @@ type l1expr =
   | Assign of string * l1expr
   | Let of let_pattern * l1expr * l1expr
   | LetRec of string * arg_pattern * l1expr * type_expr * l1expr
+  | Seqn of l1expr * l1expr
   | IfE of l1expr * l1expr * l1expr
   | WhileE of l1expr * l1expr
   | VecE of l1expr list
@@ -51,9 +53,11 @@ module E = struct
   let binop l r op verifier = BinOp (l, r, op, verifier)
   let fn pat ret_type body = FunE (pat, ret_type, body)
   let apply f arg = Apply (f, arg)
+  let assign id e = Assign (id, e)
   let let' pattern body next = Let (pattern, body, next)
   let let_rec fn_id arg_pat body ret_type next = 
     LetRec (fn_id, arg_pat, body, ret_type, next)
+  let seqn l r = Seqn (l, r)
   let if' flag t f = IfE (flag, t, f)
   let vec l = VecE l
   let tuple l = TupleE l
@@ -78,9 +82,10 @@ module Op = struct
   let add l r = BinOp (l, r, Expr.Op.add, fun _ _ -> Some T.int)
   let mul l r = BinOp (l, r, Expr.Op.mul, fun _ _ -> Some T.int)
   
-  let tup_get idx e = UnaryOp (e, Expr.Op.tup_get idx, fun t -> match t with
-    | TupleT t -> Array.get t idx |> Option.some
-    | _ -> None  
+  let tup_get idx e = UnaryOp (e, Expr.Op.tup_get idx, fun t -> 
+    match t |> T.as_tuple with
+    | Ok a -> Array.get a idx |> Option.some
+    | Error () -> None
   )
 end
   
@@ -96,12 +101,12 @@ let toplevel_join : (l1expr -> l1expr) list -> l1expr -> l1expr
   aux l e
   
 module TupleBuilder = struct
-  let join_rev l r = match l with
-  | TupleTE data -> TE.tuple (r :: data)
+  let join_rev l r = match l |> TE.as_tuple with
+  | Ok data -> TE.tuple (r :: data)
   | _ -> TE.tuple [r; l]
   
-  let rev t = match t with
-  | TupleTE data -> TupleTE (data |> List.rev)
+  let rev t = match t |> TE.as_tuple with
+  | Ok data -> TE.tuple (data |> List.rev)
   | _ -> failwith "`TupleBuilder.rev` should get TupleTE type as arg"
 end
 
@@ -118,8 +123,8 @@ let rec assign_let_pat : let_pattern -> l1type -> t_env -> (string * l1type) lis
     let inner = assign_let_pat pat type_to_assign t_env in
     (alias_id, type_to_assign) :: inner
   | TupleLP pat_data -> begin
-    match type_to_assign with
-    | TupleT type_data -> 
+    match type_to_assign |> T.as_tuple with
+    | Ok type_data -> 
       let type_data = Array.to_list type_data in
       let mapped = 
         let mapper = fun pat t -> assign_let_pat pat t t_env in
@@ -219,8 +224,8 @@ let type_check : l1expr -> unit
     | Apply (fn, arg) -> 
       let fn_type = pret fn t_env in
       begin
-        match fn_type with
-        | FunT (arg_type_expect, ret_type) -> 
+        match fn_type |> T.as_fun with
+        | Ok (arg_type_expect, ret_type) -> 
           let arg_type = pret arg t_env in
           let () = arg_type <:! arg_type_expect in
           ret_type
@@ -248,6 +253,9 @@ let type_check : l1expr -> unit
       let body_type = pret body new_t_env in
       let () = body_type <:! ret_type in
       pret next new_t_env
+    | Seqn (l, r) -> 
+      let _ = pret l t_env in
+      pret r t_env
     | IfE (flag, t, f) -> 
       let flag_type = pret flag t_env in
       if flag_type <:: T.bool then
@@ -330,6 +338,7 @@ let compile : l1expr -> Expr.expr
       let () = List.iter f l' in
       let () = l := List.rev !l in
       Expr.Help.let_join !l (aux next !env)
+    | Seqn (l, r) -> Expr.Help.seqn (aux l env) (aux r env)
     | TupleE l -> 
       l |> List.map (fun elem -> aux elem env) 
       |> Array.of_list

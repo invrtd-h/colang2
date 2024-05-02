@@ -42,6 +42,9 @@ open Lang.L1type
 %token AH
 %token MEOGEORA
 
+%token JA
+%token TILDE
+
 %token MUKM
 
 %token IF
@@ -54,7 +57,8 @@ open Lang.L1type
 
 %token SKIVIA
 %token INTTYPE
-%token BOOLTYPE
+%token ILKA
+%token ANILKA
 %token ARROW
 %token VECTOR
 %token JOYGO
@@ -71,35 +75,33 @@ open Lang.L1type
 %left ARROW
 %left JOYGO
 
-
 %start <l1expr> prog
 
 %%
 prog:
-  | t = toplevel* CHUNJAT EXCLAMATION e = expr EOF 
+  | t = toplevel* CHUNJAT EXCLAMATION LBRACE e = expr RBRACE EOF 
     { toplevel_join t e }
   ;
   
 toplevel:
   | LET1 JAGIGA pat = let_pattern IRANUN SARAMINDE body = expr eul HETE
-    { fun next ->
-      E.let' pat body next }
+    { E.let' pat body }
   | IN fn_name = ID JUNGENEUN EXCLAMEXCLAM AMURI pat = arg_pattern IRADO ret_t = type_expr 
     LBRACE body = expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM
-    { fun next ->
-      E.let_rec fn_name pat body ret_t next }
+    { E.let_rec fn_name pat body ret_t }
   | YEOREOBUN name = ID NEUN defs = variant_def* QUESQUES
-    { fun next ->
-      E.variant_def name defs next }
+    { E.variant_def name defs }
   ;
   
 eul:
   | EUL { () }
   | REUL EXCLAMATION? { () }
+  ;
   
 variant_def:
   | cons_name = ID ILKAYO { cons_name, TE.unit }
   | cons_name = ID COLON tinfo = type_expr ILKAYO { cons_name, tinfo }
+  ;
   
 let_pattern:
   | UNDERSCORE { Lp.underscore }
@@ -118,18 +120,31 @@ arg_pattern:
   ;
   
 expr:
+  | e = aexpr { e }
+  | e = aexpr SEMICOLON { E.seqn e E.unit }
+  | e1 = aexpr SEMICOLON e2 = expr { E.seqn e1 e2 }
+  | hd = exprexpr SEMICOLON e = expr { hd e }
+  ;
+
+exprexpr: (* expr -> expr *)
+  | JA TILDE pat = let_pattern REUL EXCLAMATION body = aexpr
+    { E.let' pat body }
+  ;
+  
+aexpr: (* atomic expr *)
   | i = INT { E.int i }
   | x = var_id { E.id x }
   | SKIVIA { E.unit }
   | TRUE { E.bool true }
   | FALSE { E.bool false }
-  | IF QUESTION LPAREN flag = expr RPAREN t = expr ELSE f = expr 
+  | IF QUESTION LPAREN flag = aexpr RPAREN t = aexpr ELSE f = aexpr 
     { E.if' flag t f }
-  | LPAREN e = expr RPAREN { e }
-  | f = expr AH arg = expr MEOGEORA QUESQUES (* apply *)
+  | LPAREN e = aexpr RPAREN { e }
+  | CHUNJAT EXCLAMATION LBRACE e = expr RBRACE { e }
+  | f = aexpr AH arg = aexpr MEOGEORA QUESQUES (* apply *)
     { E.apply f arg }
-  | lhs = expr JOYGO rhs = expr { Op.mul lhs rhs } (* mult *)
-  | MUKM EXCLAMEXCLAM LPAREN l = separated_nonempty_list(COMMA, expr) RPAREN (* tuple *)
+  | lhs = aexpr JOYGO rhs = aexpr { Op.mul lhs rhs } (* mult *)
+  | MUKM EXCLAMEXCLAM LPAREN l = separated_nonempty_list(COMMA, aexpr) RPAREN (* tuple *)
     { E.tuple l }
   ;
 
@@ -137,7 +152,7 @@ type_expr:
   | x = ID { TE.typeid x }
   | SKIVIA { TE.unit }
   | INTTYPE { TE.int }
-  | BOOLTYPE { TE.bool }
+  | ILKA ANILKA QUESQUES { TE.bool }
   | t1 = type_expr ARROW t2 = type_expr { TE.fn t1 t2 }
   | LPAREN t = type_expr RPAREN { t }
   | t = type_expr_tuple { TupleBuilder.rev t }

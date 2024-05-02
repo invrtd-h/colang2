@@ -20,11 +20,13 @@ let tests = "test suite for total language features" >::: [
     ()
   );
   "wrongSyntax.mte" >:: (fun _ ->
-    try
-      let _ = run WrongSyntax.test.(0) in
-      failwith "Test Failed: wrongSyntax.mte must fail since it has a wrong syntax"
-    with
-      | ParserError s -> Printf.printf "%s" s
+    for i = 0 to Array.length WrongSyntax.test - 1 do
+      try
+        let _ = run WrongSyntax.test.(i) in
+        failwith "Test Failed: wrongSyntax.mte must fail since it has a wrong syntax"
+      with
+        | ParserError s -> Printf.printf "%s" s
+    done
   );
 ]
 

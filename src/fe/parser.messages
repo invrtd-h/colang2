@@ -8,7 +8,7 @@ prog: VECTOR
 ##
 ##
 
-707!
+<YOUR SYNTAX ERROR MESSAGE HERE>
 
 prog: YEOREOBUN YEOREOBUN
 ##
@@ -75,7 +75,7 @@ prog: LET1 JAGIGA ID COLON MTE YEOREOBUN
 ##
 ## Ends in an error in state: 8.
 ##
-## type_expr -> MTE . LBRACE record_fields RBRACE [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> MTE . LBRACE record_fields RBRACE [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## MTE
@@ -87,7 +87,7 @@ prog: LET1 JAGIGA ID COLON MTE LBRACE YEOREOBUN
 ##
 ## Ends in an error in state: 9.
 ##
-## type_expr -> MTE LBRACE . record_fields RBRACE [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> MTE LBRACE . record_fields RBRACE [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## MTE LBRACE
@@ -123,7 +123,7 @@ prog: LET1 JAGIGA ID COLON LPAREN YEOREOBUN
 ##
 ## Ends in an error in state: 12.
 ##
-## type_expr -> LPAREN . type_expr RPAREN [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> LPAREN . type_expr RPAREN [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN
@@ -131,12 +131,36 @@ prog: LET1 JAGIGA ID COLON LPAREN YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON LPAREN BOOLTYPE SEMICOLON
+prog: LET1 JAGIGA ID COLON ILKA YEOREOBUN
 ##
-## Ends in an error in state: 17.
+## Ends in an error in state: 14.
+##
+## type_expr -> ILKA . ANILKA QUESQUES [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+##
+## The known suffix of the stack is as follows:
+## ILKA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: LET1 JAGIGA ID COLON ILKA ANILKA YEOREOBUN
+##
+## Ends in an error in state: 15.
+##
+## type_expr -> ILKA ANILKA . QUESQUES [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+##
+## The known suffix of the stack is as follows:
+## ILKA ANILKA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: LET1 JAGIGA ID COLON LPAREN ID SEMICOLON
+##
+## Ends in an error in state: 19.
 ##
 ## type_expr -> type_expr . ARROW type_expr [ RPAREN JOYGO ARROW ]
-## type_expr -> LPAREN type_expr . RPAREN [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> LPAREN type_expr . RPAREN [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ## type_expr_tuple -> type_expr . JOYGO type_expr [ RPAREN JOYGO ARROW ]
 ##
 ## The known suffix of the stack is as follows:
@@ -145,11 +169,11 @@ prog: LET1 JAGIGA ID COLON LPAREN BOOLTYPE SEMICOLON
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON BOOLTYPE JOYGO YEOREOBUN
+prog: LET1 JAGIGA ID COLON ID JOYGO YEOREOBUN
 ##
-## Ends in an error in state: 19.
+## Ends in an error in state: 21.
 ##
-## type_expr_tuple -> type_expr JOYGO . type_expr [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr_tuple -> type_expr JOYGO . type_expr [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## type_expr JOYGO
@@ -157,11 +181,11 @@ prog: LET1 JAGIGA ID COLON BOOLTYPE JOYGO YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON BOOLTYPE ARROW YEOREOBUN
+prog: LET1 JAGIGA ID COLON ID ARROW YEOREOBUN
 ##
-## Ends in an error in state: 21.
+## Ends in an error in state: 23.
 ##
-## type_expr -> type_expr ARROW . type_expr [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> type_expr ARROW . type_expr [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## type_expr ARROW
@@ -169,13 +193,13 @@ prog: LET1 JAGIGA ID COLON BOOLTYPE ARROW YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON BOOLTYPE ARROW BOOLTYPE YEOREOBUN
+prog: LET1 JAGIGA ID COLON ID ARROW ID YEOREOBUN
 ##
-## Ends in an error in state: 22.
+## Ends in an error in state: 24.
 ##
-## type_expr -> type_expr . ARROW type_expr [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
-## type_expr -> type_expr ARROW type_expr . [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
-## type_expr_tuple -> type_expr . JOYGO type_expr [ SEMICOLON RPAREN RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> type_expr . ARROW type_expr [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr -> type_expr ARROW type_expr . [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
+## type_expr_tuple -> type_expr . JOYGO type_expr [ SEMICOLON RPAREN REUL RBRACE LBRACE JOYGO IRANUN IRADO ILKAYO COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## type_expr ARROW type_expr
@@ -183,9 +207,9 @@ prog: LET1 JAGIGA ID COLON BOOLTYPE ARROW BOOLTYPE YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON MTE LBRACE ID COLON BOOLTYPE RPAREN
+prog: LET1 JAGIGA ID COLON MTE LBRACE ID COLON ID RPAREN
 ##
-## Ends in an error in state: 23.
+## Ends in an error in state: 25.
 ##
 ## record_field -> ID COLON type_expr . [ SEMICOLON RBRACE ]
 ## type_expr -> type_expr . ARROW type_expr [ SEMICOLON RBRACE JOYGO ARROW ]
@@ -197,9 +221,9 @@ prog: LET1 JAGIGA ID COLON MTE LBRACE ID COLON BOOLTYPE RPAREN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON MTE LBRACE ID COLON BOOLTYPE SEMICOLON YEOREOBUN
+prog: LET1 JAGIGA ID COLON MTE LBRACE ID COLON ID SEMICOLON YEOREOBUN
 ##
-## Ends in an error in state: 27.
+## Ends in an error in state: 29.
 ##
 ## record_fields -> record_field SEMICOLON . [ RBRACE ]
 ## record_fields -> record_field SEMICOLON . record_fields [ RBRACE ]
@@ -210,9 +234,9 @@ prog: LET1 JAGIGA ID COLON MTE LBRACE ID COLON BOOLTYPE SEMICOLON YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: YEOREOBUN ID NEUN ID COLON BOOLTYPE SEMICOLON
+prog: YEOREOBUN ID NEUN ID COLON ID SEMICOLON
 ##
-## Ends in an error in state: 29.
+## Ends in an error in state: 31.
 ##
 ## type_expr -> type_expr . ARROW type_expr [ JOYGO ILKAYO ARROW ]
 ## type_expr_tuple -> type_expr . JOYGO type_expr [ JOYGO ILKAYO ARROW ]
@@ -226,7 +250,7 @@ prog: YEOREOBUN ID NEUN ID COLON BOOLTYPE SEMICOLON
 
 prog: YEOREOBUN ID NEUN ID ILKAYO YEOREOBUN
 ##
-## Ends in an error in state: 31.
+## Ends in an error in state: 33.
 ##
 ## list(variant_def) -> variant_def . list(variant_def) [ QUESQUES ]
 ##
@@ -238,7 +262,7 @@ prog: YEOREOBUN ID NEUN ID ILKAYO YEOREOBUN
 
 prog: LET1 YEOREOBUN
 ##
-## Ends in an error in state: 35.
+## Ends in an error in state: 37.
 ##
 ## toplevel -> LET1 . JAGIGA let_pattern IRANUN SARAMINDE expr eul HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -250,7 +274,7 @@ prog: LET1 YEOREOBUN
 
 prog: LET1 JAGIGA YEOREOBUN
 ##
-## Ends in an error in state: 36.
+## Ends in an error in state: 38.
 ##
 ## toplevel -> LET1 JAGIGA . let_pattern IRANUN SARAMINDE expr eul HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -262,9 +286,9 @@ prog: LET1 JAGIGA YEOREOBUN
 
 prog: LET1 JAGIGA LPAREN YEOREOBUN
 ##
-## Ends in an error in state: 39.
+## Ends in an error in state: 41.
 ##
-## let_pattern -> LPAREN . separated_nonempty_list(COMMA,let_pattern) RPAREN [ RPAREN IRANUN COMMA ]
+## let_pattern -> LPAREN . separated_nonempty_list(COMMA,let_pattern) RPAREN [ RPAREN REUL IRANUN COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN
@@ -274,10 +298,10 @@ prog: LET1 JAGIGA LPAREN YEOREOBUN
 
 prog: LET1 JAGIGA ID YEOREOBUN
 ##
-## Ends in an error in state: 41.
+## Ends in an error in state: 43.
 ##
-## let_pattern -> var_id . [ RPAREN IRANUN COMMA ]
-## let_pattern -> var_id . COLON type_expr [ RPAREN IRANUN COMMA ]
+## let_pattern -> var_id . [ RPAREN REUL IRANUN COMMA ]
+## let_pattern -> var_id . COLON type_expr [ RPAREN REUL IRANUN COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## var_id
@@ -287,9 +311,9 @@ prog: LET1 JAGIGA ID YEOREOBUN
 
 prog: LET1 JAGIGA ID COLON YEOREOBUN
 ##
-## Ends in an error in state: 42.
+## Ends in an error in state: 44.
 ##
-## let_pattern -> var_id COLON . type_expr [ RPAREN IRANUN COMMA ]
+## let_pattern -> var_id COLON . type_expr [ RPAREN REUL IRANUN COMMA ]
 ##
 ## The known suffix of the stack is as follows:
 ## var_id COLON
@@ -297,13 +321,13 @@ prog: LET1 JAGIGA ID COLON YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID COLON BOOLTYPE SEMICOLON
+prog: LET1 JAGIGA ID COLON ID SEMICOLON
 ##
-## Ends in an error in state: 43.
+## Ends in an error in state: 45.
 ##
-## let_pattern -> var_id COLON type_expr . [ RPAREN IRANUN COMMA ]
-## type_expr -> type_expr . ARROW type_expr [ RPAREN JOYGO IRANUN COMMA ARROW ]
-## type_expr_tuple -> type_expr . JOYGO type_expr [ RPAREN JOYGO IRANUN COMMA ARROW ]
+## let_pattern -> var_id COLON type_expr . [ RPAREN REUL IRANUN COMMA ]
+## type_expr -> type_expr . ARROW type_expr [ RPAREN REUL JOYGO IRANUN COMMA ARROW ]
+## type_expr_tuple -> type_expr . JOYGO type_expr [ RPAREN REUL JOYGO IRANUN COMMA ARROW ]
 ##
 ## The known suffix of the stack is as follows:
 ## var_id COLON type_expr
@@ -311,9 +335,9 @@ prog: LET1 JAGIGA ID COLON BOOLTYPE SEMICOLON
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA LPAREN UNDERSCORE YEOREOBUN
+prog: LET1 JAGIGA LPAREN ID REUL
 ##
-## Ends in an error in state: 46.
+## Ends in an error in state: 48.
 ##
 ## separated_nonempty_list(COMMA,let_pattern) -> let_pattern . [ RPAREN ]
 ## separated_nonempty_list(COMMA,let_pattern) -> let_pattern . COMMA separated_nonempty_list(COMMA,let_pattern) [ RPAREN ]
@@ -321,27 +345,48 @@ prog: LET1 JAGIGA LPAREN UNDERSCORE YEOREOBUN
 ## The known suffix of the stack is as follows:
 ## let_pattern
 ##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 43, spurious reduction of production let_pattern -> var_id
+##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-
-
-
-prog: LET1 JAGIGA UNDERSCORE YEOREOBUN
+prog: LET1 JAGIGA LPAREN ID COMMA YEOREOBUN
 ##
 ## Ends in an error in state: 49.
+##
+## separated_nonempty_list(COMMA,let_pattern) -> let_pattern COMMA . separated_nonempty_list(COMMA,let_pattern) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## let_pattern COMMA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: LET1 JAGIGA ID RPAREN
+##
+## Ends in an error in state: 51.
 ##
 ## toplevel -> LET1 JAGIGA let_pattern . IRANUN SARAMINDE expr eul HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
 ## The known suffix of the stack is as follows:
 ## LET1 JAGIGA let_pattern
 ##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 43, spurious reduction of production let_pattern -> var_id
+##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
 prog: LET1 JAGIGA ID IRANUN YEOREOBUN
 ##
-## Ends in an error in state: 50.
+## Ends in an error in state: 52.
 ##
 ## toplevel -> LET1 JAGIGA let_pattern IRANUN . SARAMINDE expr eul HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -353,7 +398,7 @@ prog: LET1 JAGIGA ID IRANUN YEOREOBUN
 
 prog: LET1 JAGIGA ID IRANUN SARAMINDE YEOREOBUN
 ##
-## Ends in an error in state: 51.
+## Ends in an error in state: 53.
 ##
 ## toplevel -> LET1 JAGIGA let_pattern IRANUN SARAMINDE . expr eul HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -363,11 +408,47 @@ prog: LET1 JAGIGA ID IRANUN SARAMINDE YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION LPAREN YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE MUKM YEOREOBUN
+##
+## Ends in an error in state: 56.
+##
+## aexpr -> MUKM . EXCLAMEXCLAM LPAREN separated_nonempty_list(COMMA,aexpr) RPAREN [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## MUKM
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE MUKM EXCLAMEXCLAM YEOREOBUN
 ##
 ## Ends in an error in state: 57.
 ##
-## expr -> LPAREN . expr RPAREN [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> MUKM EXCLAMEXCLAM . LPAREN separated_nonempty_list(COMMA,aexpr) RPAREN [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## MUKM EXCLAMEXCLAM
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE MUKM EXCLAMEXCLAM LPAREN YEOREOBUN
+##
+## Ends in an error in state: 58.
+##
+## aexpr -> MUKM EXCLAMEXCLAM LPAREN . separated_nonempty_list(COMMA,aexpr) RPAREN [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## MUKM EXCLAMEXCLAM LPAREN
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE LPAREN YEOREOBUN
+##
+## Ends in an error in state: 59.
+##
+## aexpr -> LPAREN . aexpr RPAREN [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
 ## LPAREN
@@ -375,11 +456,11 @@ prog: CHUNJAT EXCLAMATION LPAREN YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE IF YEOREOBUN
 ##
-## Ends in an error in state: 59.
+## Ends in an error in state: 61.
 ##
-## expr -> IF . QUESTION LPAREN expr RPAREN expr ELSE expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> IF . QUESTION LPAREN aexpr RPAREN aexpr ELSE aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF
@@ -387,11 +468,11 @@ prog: CHUNJAT EXCLAMATION IF YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF QUESTION YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION YEOREOBUN
 ##
-## Ends in an error in state: 60.
+## Ends in an error in state: 62.
 ##
-## expr -> IF QUESTION . LPAREN expr RPAREN expr ELSE expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> IF QUESTION . LPAREN aexpr RPAREN aexpr ELSE aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF QUESTION
@@ -399,11 +480,11 @@ prog: CHUNJAT EXCLAMATION IF QUESTION YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION LPAREN YEOREOBUN
 ##
-## Ends in an error in state: 61.
+## Ends in an error in state: 63.
 ##
-## expr -> IF QUESTION LPAREN . expr RPAREN expr ELSE expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> IF QUESTION LPAREN . aexpr RPAREN aexpr ELSE aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
 ## IF QUESTION LPAREN
@@ -411,153 +492,359 @@ prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN ID YEOREOBUN
-##
-## Ends in an error in state: 64.
-##
-## expr -> IF QUESTION LPAREN expr . RPAREN expr ELSE expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
-## expr -> expr . AH expr MEOGEORA QUESQUES [ RPAREN JOYGO AH ]
-## expr -> expr . JOYGO expr [ RPAREN JOYGO AH ]
-##
-## The known suffix of the stack is as follows:
-## IF QUESTION LPAREN expr
-##
-
-<YOUR SYNTAX ERROR MESSAGE HERE>
-
-prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN ID RPAREN YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE CHUNJAT YEOREOBUN
 ##
 ## Ends in an error in state: 65.
 ##
-## expr -> IF QUESTION LPAREN expr RPAREN . expr ELSE expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> CHUNJAT . EXCLAMATION LBRACE expr RBRACE [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
-## IF QUESTION LPAREN expr RPAREN
+## CHUNJAT
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN ID RPAREN ID YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE CHUNJAT EXCLAMATION YEOREOBUN
 ##
 ## Ends in an error in state: 66.
 ##
-## expr -> IF QUESTION LPAREN expr RPAREN expr . ELSE expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
-## expr -> expr . AH expr MEOGEORA QUESQUES [ JOYGO ELSE AH ]
-## expr -> expr . JOYGO expr [ JOYGO ELSE AH ]
+## aexpr -> CHUNJAT EXCLAMATION . LBRACE expr RBRACE [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
-## IF QUESTION LPAREN expr RPAREN expr
+## CHUNJAT EXCLAMATION
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION ID JOYGO YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE CHUNJAT EXCLAMATION LBRACE YEOREOBUN
 ##
 ## Ends in an error in state: 67.
 ##
-## expr -> expr JOYGO . expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> CHUNJAT EXCLAMATION LBRACE . expr RBRACE [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
-## expr JOYGO
+## CHUNJAT EXCLAMATION LBRACE
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN ID RPAREN ID ELSE YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE JA YEOREOBUN
+##
+## Ends in an error in state: 68.
+##
+## exprexpr -> JA . TILDE let_pattern REUL EXCLAMATION aexpr [ SEMICOLON ]
+##
+## The known suffix of the stack is as follows:
+## JA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE JA TILDE YEOREOBUN
 ##
 ## Ends in an error in state: 69.
 ##
-## expr -> IF QUESTION LPAREN expr RPAREN expr ELSE . expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## exprexpr -> JA TILDE . let_pattern REUL EXCLAMATION aexpr [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## IF QUESTION LPAREN expr RPAREN expr ELSE
+## JA TILDE
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION IF QUESTION LPAREN ID RPAREN ID ELSE ID YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE JA TILDE ID RPAREN
 ##
 ## Ends in an error in state: 70.
 ##
-## expr -> IF QUESTION LPAREN expr RPAREN expr ELSE expr . [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
-## expr -> expr . AH expr MEOGEORA QUESQUES [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
-## expr -> expr . JOYGO expr [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## exprexpr -> JA TILDE let_pattern . REUL EXCLAMATION aexpr [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## IF QUESTION LPAREN expr RPAREN expr ELSE expr
+## JA TILDE let_pattern
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 43, spurious reduction of production let_pattern -> var_id
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION ID AH YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE JA TILDE ID REUL YEOREOBUN
 ##
 ## Ends in an error in state: 71.
 ##
-## expr -> expr AH . expr MEOGEORA QUESQUES [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## exprexpr -> JA TILDE let_pattern REUL . EXCLAMATION aexpr [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## expr AH
+## JA TILDE let_pattern REUL
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION ID AH ID YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE JA TILDE ID REUL EXCLAMATION YEOREOBUN
 ##
 ## Ends in an error in state: 72.
 ##
-## expr -> expr . AH expr MEOGEORA QUESQUES [ MEOGEORA JOYGO AH ]
-## expr -> expr AH expr . MEOGEORA QUESQUES [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
-## expr -> expr . JOYGO expr [ MEOGEORA JOYGO AH ]
+## exprexpr -> JA TILDE let_pattern REUL EXCLAMATION . aexpr [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## expr AH expr
+## JA TILDE let_pattern REUL EXCLAMATION
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION ID AH ID MEOGEORA YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE JA TILDE ID REUL EXCLAMATION ID YEOREOBUN
 ##
-## Ends in an error in state: 73.
+## Ends in an error in state: 74.
 ##
-## expr -> expr AH expr MEOGEORA . QUESQUES [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ SEMICOLON JOYGO AH ]
+## aexpr -> aexpr . JOYGO aexpr [ SEMICOLON JOYGO AH ]
+## exprexpr -> JA TILDE let_pattern REUL EXCLAMATION aexpr . [ SEMICOLON ]
 ##
 ## The known suffix of the stack is as follows:
-## expr AH expr MEOGEORA
+## JA TILDE let_pattern REUL EXCLAMATION aexpr
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION LPAREN ID YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE ID JOYGO YEOREOBUN
 ##
 ## Ends in an error in state: 75.
 ##
-## expr -> LPAREN expr . RPAREN [ RPAREN REUL RBRACE MEOGEORA JOYGO EUL EOF ELSE COMMA AH ]
-## expr -> expr . AH expr MEOGEORA QUESQUES [ RPAREN JOYGO AH ]
-## expr -> expr . JOYGO expr [ RPAREN JOYGO AH ]
+## aexpr -> aexpr JOYGO . aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
 ##
 ## The known suffix of the stack is as follows:
-## LPAREN expr
+## aexpr JOYGO
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID IRANUN SARAMINDE ID YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE ID AH YEOREOBUN
+##
+## Ends in an error in state: 77.
+##
+## aexpr -> aexpr AH . aexpr MEOGEORA QUESQUES [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## aexpr AH
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE ID AH ID YEOREOBUN
+##
+## Ends in an error in state: 78.
+##
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ MEOGEORA JOYGO AH ]
+## aexpr -> aexpr AH aexpr . MEOGEORA QUESQUES [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+## aexpr -> aexpr . JOYGO aexpr [ MEOGEORA JOYGO AH ]
+##
+## The known suffix of the stack is as follows:
+## aexpr AH aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE ID AH ID MEOGEORA YEOREOBUN
+##
+## Ends in an error in state: 79.
+##
+## aexpr -> aexpr AH aexpr MEOGEORA . QUESQUES [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## aexpr AH aexpr MEOGEORA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE JA TILDE ID REUL EXCLAMATION ID SEMICOLON YEOREOBUN
 ##
 ## Ends in an error in state: 82.
 ##
-## expr -> expr . AH expr MEOGEORA QUESQUES [ REUL JOYGO EUL AH ]
-## expr -> expr . JOYGO expr [ REUL JOYGO EUL AH ]
+## expr -> exprexpr SEMICOLON . expr [ REUL RBRACE EUL ]
+##
+## The known suffix of the stack is as follows:
+## exprexpr SEMICOLON
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE ID YEOREOBUN
+##
+## Ends in an error in state: 84.
+##
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ SEMICOLON REUL RBRACE JOYGO EUL AH ]
+## aexpr -> aexpr . JOYGO aexpr [ SEMICOLON REUL RBRACE JOYGO EUL AH ]
+## expr -> aexpr . [ REUL RBRACE EUL ]
+## expr -> aexpr . SEMICOLON [ REUL RBRACE EUL ]
+## expr -> aexpr . SEMICOLON expr [ REUL RBRACE EUL ]
+##
+## The known suffix of the stack is as follows:
+## aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE ID SEMICOLON YEOREOBUN
+##
+## Ends in an error in state: 85.
+##
+## expr -> aexpr SEMICOLON . [ REUL RBRACE EUL ]
+## expr -> aexpr SEMICOLON . expr [ REUL RBRACE EUL ]
+##
+## The known suffix of the stack is as follows:
+## aexpr SEMICOLON
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE CHUNJAT EXCLAMATION LBRACE ID REUL
+##
+## Ends in an error in state: 87.
+##
+## aexpr -> CHUNJAT EXCLAMATION LBRACE expr . RBRACE [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## CHUNJAT EXCLAMATION LBRACE expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 84, spurious reduction of production expr -> aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION LPAREN ID YEOREOBUN
+##
+## Ends in an error in state: 89.
+##
+## aexpr -> IF QUESTION LPAREN aexpr . RPAREN aexpr ELSE aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ RPAREN JOYGO AH ]
+## aexpr -> aexpr . JOYGO aexpr [ RPAREN JOYGO AH ]
+##
+## The known suffix of the stack is as follows:
+## IF QUESTION LPAREN aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION LPAREN ID RPAREN YEOREOBUN
+##
+## Ends in an error in state: 90.
+##
+## aexpr -> IF QUESTION LPAREN aexpr RPAREN . aexpr ELSE aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## IF QUESTION LPAREN aexpr RPAREN
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION LPAREN ID RPAREN ID YEOREOBUN
+##
+## Ends in an error in state: 91.
+##
+## aexpr -> IF QUESTION LPAREN aexpr RPAREN aexpr . ELSE aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ JOYGO ELSE AH ]
+## aexpr -> aexpr . JOYGO aexpr [ JOYGO ELSE AH ]
+##
+## The known suffix of the stack is as follows:
+## IF QUESTION LPAREN aexpr RPAREN aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION LPAREN ID RPAREN ID ELSE YEOREOBUN
+##
+## Ends in an error in state: 92.
+##
+## aexpr -> IF QUESTION LPAREN aexpr RPAREN aexpr ELSE . aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## IF QUESTION LPAREN aexpr RPAREN aexpr ELSE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE IF QUESTION LPAREN ID RPAREN ID ELSE ID YEOREOBUN
+##
+## Ends in an error in state: 93.
+##
+## aexpr -> IF QUESTION LPAREN aexpr RPAREN aexpr ELSE aexpr . [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+## aexpr -> aexpr . JOYGO aexpr [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+##
+## The known suffix of the stack is as follows:
+## IF QUESTION LPAREN aexpr RPAREN aexpr ELSE aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE LPAREN ID YEOREOBUN
+##
+## Ends in an error in state: 94.
+##
+## aexpr -> LPAREN aexpr . RPAREN [ SEMICOLON RPAREN REUL RBRACE MEOGEORA JOYGO EUL ELSE COMMA AH ]
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ RPAREN JOYGO AH ]
+## aexpr -> aexpr . JOYGO aexpr [ RPAREN JOYGO AH ]
+##
+## The known suffix of the stack is as follows:
+## LPAREN aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE MUKM EXCLAMEXCLAM LPAREN ID YEOREOBUN
+##
+## Ends in an error in state: 98.
+##
+## aexpr -> aexpr . AH aexpr MEOGEORA QUESQUES [ RPAREN JOYGO COMMA AH ]
+## aexpr -> aexpr . JOYGO aexpr [ RPAREN JOYGO COMMA AH ]
+## separated_nonempty_list(COMMA,aexpr) -> aexpr . [ RPAREN ]
+## separated_nonempty_list(COMMA,aexpr) -> aexpr . COMMA separated_nonempty_list(COMMA,aexpr) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE MUKM EXCLAMEXCLAM LPAREN ID COMMA YEOREOBUN
+##
+## Ends in an error in state: 99.
+##
+## separated_nonempty_list(COMMA,aexpr) -> aexpr COMMA . separated_nonempty_list(COMMA,aexpr) [ RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## aexpr COMMA
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: LET1 JAGIGA ID IRANUN SARAMINDE ID RBRACE
+##
+## Ends in an error in state: 101.
+##
 ## toplevel -> LET1 JAGIGA let_pattern IRANUN SARAMINDE expr . eul HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
 ## The known suffix of the stack is as follows:
 ## LET1 JAGIGA let_pattern IRANUN SARAMINDE expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 84, spurious reduction of production expr -> aexpr
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
 prog: LET1 JAGIGA ID IRANUN SARAMINDE ID REUL YEOREOBUN
 ##
-## Ends in an error in state: 83.
+## Ends in an error in state: 102.
 ##
 ## eul -> REUL . option(EXCLAMATION) [ HETE ]
 ##
@@ -567,9 +854,9 @@ prog: LET1 JAGIGA ID IRANUN SARAMINDE ID REUL YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: LET1 JAGIGA ID IRANUN SARAMINDE ID REUL EXCLAMATION YEOREOBUN
+prog: LET1 JAGIGA ID IRANUN SARAMINDE ID EUL YEOREOBUN
 ##
-## Ends in an error in state: 87.
+## Ends in an error in state: 106.
 ##
 ## toplevel -> LET1 JAGIGA let_pattern IRANUN SARAMINDE expr eul . HETE [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -581,7 +868,7 @@ prog: LET1 JAGIGA ID IRANUN SARAMINDE ID REUL EXCLAMATION YEOREOBUN
 
 prog: IN YEOREOBUN
 ##
-## Ends in an error in state: 89.
+## Ends in an error in state: 108.
 ##
 ## toplevel -> IN . ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -593,7 +880,7 @@ prog: IN YEOREOBUN
 
 prog: IN ID YEOREOBUN
 ##
-## Ends in an error in state: 90.
+## Ends in an error in state: 109.
 ##
 ## toplevel -> IN ID . JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -605,7 +892,7 @@ prog: IN ID YEOREOBUN
 
 prog: IN ID JUNGENEUN YEOREOBUN
 ##
-## Ends in an error in state: 91.
+## Ends in an error in state: 110.
 ##
 ## toplevel -> IN ID JUNGENEUN . EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -617,7 +904,7 @@ prog: IN ID JUNGENEUN YEOREOBUN
 
 prog: IN ID JUNGENEUN EXCLAMEXCLAM YEOREOBUN
 ##
-## Ends in an error in state: 92.
+## Ends in an error in state: 111.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM . AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -629,7 +916,7 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM YEOREOBUN
 
 prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI YEOREOBUN
 ##
-## Ends in an error in state: 93.
+## Ends in an error in state: 112.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI . arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -641,7 +928,7 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI YEOREOBUN
 
 prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID YEOREOBUN
 ##
-## Ends in an error in state: 94.
+## Ends in an error in state: 113.
 ##
 ## arg_pattern -> ID . COLON type_expr [ IRADO ]
 ##
@@ -653,7 +940,7 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID YEOREOBUN
 
 prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON YEOREOBUN
 ##
-## Ends in an error in state: 95.
+## Ends in an error in state: 114.
 ##
 ## arg_pattern -> ID COLON . type_expr [ IRADO ]
 ##
@@ -663,9 +950,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE SEMICOLON
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID SEMICOLON
 ##
-## Ends in an error in state: 96.
+## Ends in an error in state: 115.
 ##
 ## arg_pattern -> ID COLON type_expr . [ IRADO ]
 ## type_expr -> type_expr . ARROW type_expr [ JOYGO IRADO ARROW ]
@@ -677,9 +964,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE SEMICOLON
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO YEOREOBUN
 ##
-## Ends in an error in state: 98.
+## Ends in an error in state: 117.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO . type_expr LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -689,9 +976,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE SEMICOLON
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID SEMICOLON
 ##
-## Ends in an error in state: 99.
+## Ends in an error in state: 118.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr . LBRACE expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ## type_expr -> type_expr . ARROW type_expr [ LBRACE JOYGO ARROW ]
@@ -703,9 +990,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE SEMICO
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID LBRACE YEOREOBUN
 ##
-## Ends in an error in state: 100.
+## Ends in an error in state: 119.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE . expr RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -715,23 +1002,27 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE ID YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID LBRACE ID REUL
 ##
-## Ends in an error in state: 101.
+## Ends in an error in state: 120.
 ##
-## expr -> expr . AH expr MEOGEORA QUESQUES [ RBRACE JOYGO AH ]
-## expr -> expr . JOYGO expr [ RBRACE JOYGO AH ]
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr . RBRACE HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
 ## The known suffix of the stack is as follows:
 ## IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr
 ##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 84, spurious reduction of production expr -> aexpr
+##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE ID RBRACE YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID LBRACE ID RBRACE YEOREOBUN
 ##
-## Ends in an error in state: 102.
+## Ends in an error in state: 121.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE . HAL SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -741,9 +1032,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE ID RBRACE HAL YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID LBRACE ID RBRACE HAL YEOREOBUN
 ##
-## Ends in an error in state: 103.
+## Ends in an error in state: 122.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL . SUGA UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -753,9 +1044,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE ID RBRACE HAL SUGA YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID LBRACE ID RBRACE HAL SUGA YEOREOBUN
 ##
-## Ends in an error in state: 104.
+## Ends in an error in state: 123.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA . UPDANDA EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -765,9 +1056,9 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE ID RBRACE HAL SUGA UPDANDA YEOREOBUN
+prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON ID IRADO ID LBRACE ID RBRACE HAL SUGA UPDANDA YEOREOBUN
 ##
-## Ends in an error in state: 105.
+## Ends in an error in state: 124.
 ##
 ## toplevel -> IN ID JUNGENEUN EXCLAMEXCLAM AMURI arg_pattern IRADO type_expr LBRACE expr RBRACE HAL SUGA UPDANDA . EXCLAMEXCLAM [ YEOREOBUN LET1 IN CHUNJAT ]
 ##
@@ -779,7 +1070,7 @@ prog: IN ID JUNGENEUN EXCLAMEXCLAM AMURI ID COLON BOOLTYPE IRADO BOOLTYPE LBRACE
 
 prog: YEOREOBUN ID NEUN QUESQUES VECTOR
 ##
-## Ends in an error in state: 107.
+## Ends in an error in state: 126.
 ##
 ## list(toplevel) -> toplevel . list(toplevel) [ CHUNJAT ]
 ##
@@ -791,9 +1082,9 @@ prog: YEOREOBUN ID NEUN QUESQUES VECTOR
 
 prog: CHUNJAT YEOREOBUN
 ##
-## Ends in an error in state: 111.
+## Ends in an error in state: 130.
 ##
-## prog -> list(toplevel) CHUNJAT . EXCLAMATION expr EOF [ # ]
+## prog -> list(toplevel) CHUNJAT . EXCLAMATION LBRACE expr RBRACE EOF [ # ]
 ##
 ## The known suffix of the stack is as follows:
 ## list(toplevel) CHUNJAT
@@ -803,9 +1094,9 @@ prog: CHUNJAT YEOREOBUN
 
 prog: CHUNJAT EXCLAMATION YEOREOBUN
 ##
-## Ends in an error in state: 112.
+## Ends in an error in state: 131.
 ##
-## prog -> list(toplevel) CHUNJAT EXCLAMATION . expr EOF [ # ]
+## prog -> list(toplevel) CHUNJAT EXCLAMATION . LBRACE expr RBRACE EOF [ # ]
 ##
 ## The known suffix of the stack is as follows:
 ## list(toplevel) CHUNJAT EXCLAMATION
@@ -813,16 +1104,44 @@ prog: CHUNJAT EXCLAMATION YEOREOBUN
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
 
-prog: CHUNJAT EXCLAMATION ID YEOREOBUN
+prog: CHUNJAT EXCLAMATION LBRACE YEOREOBUN
 ##
-## Ends in an error in state: 113.
+## Ends in an error in state: 132.
 ##
-## expr -> expr . AH expr MEOGEORA QUESQUES [ JOYGO EOF AH ]
-## expr -> expr . JOYGO expr [ JOYGO EOF AH ]
-## prog -> list(toplevel) CHUNJAT EXCLAMATION expr . EOF [ # ]
+## prog -> list(toplevel) CHUNJAT EXCLAMATION LBRACE . expr RBRACE EOF [ # ]
 ##
 ## The known suffix of the stack is as follows:
-## list(toplevel) CHUNJAT EXCLAMATION expr
+## list(toplevel) CHUNJAT EXCLAMATION LBRACE
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE ID REUL
+##
+## Ends in an error in state: 133.
+##
+## prog -> list(toplevel) CHUNJAT EXCLAMATION LBRACE expr . RBRACE EOF [ # ]
+##
+## The known suffix of the stack is as follows:
+## list(toplevel) CHUNJAT EXCLAMATION LBRACE expr
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 84, spurious reduction of production expr -> aexpr
+##
+
+<YOUR SYNTAX ERROR MESSAGE HERE>
+
+prog: CHUNJAT EXCLAMATION LBRACE ID RBRACE YEOREOBUN
+##
+## Ends in an error in state: 134.
+##
+## prog -> list(toplevel) CHUNJAT EXCLAMATION LBRACE expr RBRACE . EOF [ # ]
+##
+## The known suffix of the stack is as follows:
+## list(toplevel) CHUNJAT EXCLAMATION LBRACE expr RBRACE
 ##
 
 <YOUR SYNTAX ERROR MESSAGE HERE>
