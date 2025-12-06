@@ -1,0 +1,11 @@
+(executable
+ (public_name colang)
+ (name main)
+ (modules main)
+ (libraries lex))
+
+(executable
+ (name covert)
+ (public_name covert)
+ (modules covert)
+ (libraries std))

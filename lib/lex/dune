@@ -1,0 +1,6 @@
+(library
+ (name lex)
+ (public_name colang.lex)
+ (preprocess
+  (pps ppx_jane))
+ (libraries std zarith re))
