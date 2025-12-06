@@ -1,7 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/ocaml
-# Edit at https://www.toptal.com/developers/gitignore?templates=ocaml
-
-### OCaml ###
 *.annot
 *.cmo
 *.cma
@@ -12,7 +8,14 @@
 *.cmxs
 *.cmxa
 
-# ocamlbuild working directory
+# Files containing detailed information about the compilation (generated
+# by `ocamlc`/`ocamlopt` when invoked using the option `-bin-annot`).
+# These files are typically useful for code inspection tools
+# (e.g. Merlin).
+*.cmt
+*.cmti
+
+# ocamlbuild and Dune default working directory
 _build/
 
 # ocamlbuild targets
@@ -32,9 +35,3 @@ setup.log
 # Local OPAM switch
 _opam/
 _opam
-
-# End of https://www.toptal.com/developers/gitignore/api/ocaml
-
-src/fe/parser.automaton
-
-.VSCodeCounter/
