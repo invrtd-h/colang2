@@ -3,4 +3,4 @@
  (public_name colang.lex)
  (preprocess
   (pps ppx_jane))
- (libraries std zarith re))
+ (libraries util zarith re))

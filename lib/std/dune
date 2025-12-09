@@ -1,4 +1,0 @@
-(library
- (name std)
- (public_name colang.std)
- (libraries core))

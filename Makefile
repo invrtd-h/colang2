@@ -5,9 +5,8 @@ INSTALL_ARGS := $(if $(PREFIX),--prefix $(PREFIX),)
 default: install
 
 build:
-	dune fmt || true
-	\time dune build
-	echo "make: *** [build] Success 0"
+	dune fmt 2>/dev/null || true
+	dune build
 	
 test:
 	dune test

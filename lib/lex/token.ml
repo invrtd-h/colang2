@@ -1,4 +1,5 @@
 open! Core
+open Util
 
 module Keyword = struct
   include Token_intf.Keyword
@@ -7,6 +8,7 @@ module Keyword = struct
     [ "\xea\xb3\x84\xec\x95\xbd\xec\x84\x9c", Contract
     ; "\xea\xb9\xa0\xeb\x8b\xa4\xea\xb5\xac", Public
     ]
+    |> List.map ~f:(fun (k, v) -> Utf8.parse k, v)
   ;;
 end
 
@@ -20,8 +22,10 @@ module Syntactic = struct
     ; "}", Rbrace
     ; "[", Lbracket
     ; "]", Rbracket
+    ; "=", Equal
     ; "!", Exclam
     ]
+    |> List.map ~f:(fun (k, v) -> Utf8.parse k, v)
   ;;
 end
 

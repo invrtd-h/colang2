@@ -1,4 +1,5 @@
 open! Core
+open Util
 
 module Keyword = struct
   type t =
@@ -23,8 +24,8 @@ end
 module Token = struct
   type t =
     | Int of Z.t
-    | Id of string
-    | Operator of string
+    | Id of Utf8.t list
+    | Operator of Utf8.t list
     | Keyword of Keyword.t
     | Syntactic of Syntactic.t
 end

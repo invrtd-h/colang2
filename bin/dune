@@ -8,4 +8,4 @@
  (name covert)
  (public_name covert)
  (modules covert)
- (libraries std))
+ (libraries util))
