@@ -1,0 +1,6 @@
+(library
+ (name lang)
+ (public_name colang.lang)
+ (preprocess
+  (pps ppx_jane))
+ (libraries util zarith))
