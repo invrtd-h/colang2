@@ -1,14 +1,13 @@
 type t =
   | Bool
-  | Int of
-      { signed : bool
-      ; size : int
-      }
+  | Sint of { size : int }
+  | UInt of { size : int }
 
 module Witness = struct
   type bool_t
-  type 'width_witness sint_t
-  type 'width_witness uint_t
+  type signed_t
+  type unsigned_t
+  type ('width_witness, 'sign_witness) int_t
 
   module type Width = sig
     type t
